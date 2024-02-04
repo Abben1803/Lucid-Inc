@@ -1,2 +1,2 @@
 # Lucid-Inc
-An AI Children book generator
+Documentation Branch
