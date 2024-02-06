@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Submission Form</title>
+</head>
+<body>
+    <h2>Submit Your Story</h2>
+    <form id="storyForm">
+        <label for="childAge">Child Age:</label>
+        <input type="number" id="childAge" name="childAge" required><br><br>
+        
+        <label for="preferredLanguage">Preferred Language:</label>
+        <input type="text" id="preferredLanguage" name="preferredLanguage" required><br><br>
+        
+        <label for="storyGenre">Story Genre:</label>
+        <input type="text" id="storyGenre" name="storyGenre" required><br><br>
+        
+        <label for="artworkStyle">Artwork Style:</label>
+        <input type="text" id="artworkStyle" name="artworkStyle" required><br><br>
+        
+
+        
+        <button type="submit">Submit Story</button>
+    </form>
+
+    <script>
+        document.getElementById('storyForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+            
+            const formData = {
+                childAge: document.getElementById('childAge').value,
+                preferredLanguage: document.getElementById('preferredLanguage').value,
+                storyGenre: document.getElementById('storyGenre').value,
+                artworkStyle: document.getElementById('artworkStyle').value,
+            };
+            
+            fetch('http://localhost:3000/SUBMIT-STORY', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            .then(response => response.json())
+            .then(data => document.getElementById('response').textContent = 'Story: ' + data.choices[0].message.content)})
+            .catch((error) => console.error('Error:', error));
+    </script>
+
+    <div id = "response"></div>
+</body>
+</html>
