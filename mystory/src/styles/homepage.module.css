@@ -1,0 +1,99 @@
+.card {
+    top: 48px;
+    left: 48px;
+    width: 1344px;
+    height: 804px;
+    background-color: #ffffff;
+    border-radius: 48px;
+    box-shadow: 2px 0px 10px rgba(3,3,3,0.1);
+  }
+  
+
+.screen{
+    background-color: #ffffff;
+}
+
+.button{
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 280px;
+    left: 197px;
+    width: 48px;
+    height: 32px;
+    border: 0;
+    box-sizing: border-box;
+    border-radius: 2px;
+    color: #ffffff;
+    background-color: #000000;
+    outline: none;
+}
+
+.icon{
+    color: #ffffff;
+    fill: #ffffff;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+}
+
+.Title {
+    color: #000000;
+    font-size: 48px;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: 56px;
+}
+
+.SubTitle {
+    color: #000000;
+    font-size: 18px;
+    font-family: Roboto;
+    line-height: 24px;
+}
+
+.StartCreatingButton {
+    display: flex;
+    cursor: pointer;
+    top: 542px;
+    left: 197px;
+    width: 180px;
+    height: 40px;
+}
+
+.StartCreatingText {
+    color: #ffffff;
+    font-size: 18px;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.StartCreatingIcon {
+    color: #ffffff;
+    fill: #ffffff;
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+}
+
+.StartCreatingButton {
+    display: flex;
+    cursor: pointer;
+    top: 542px;
+    left: 197px;
+    width: 180px;
+    height: 40px;
+    padding: 0px 8px;
+    border: 0;
+    box-sizing: border-box;
+    border-radius: 2px;
+    background-color: #0de2f2;
+    color: #000000;
+    font-size: 16px;
+    font-family: Roboto;
+    font-weight: 600;
+}
+
+ 
