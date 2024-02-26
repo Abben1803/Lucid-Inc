@@ -20,27 +20,32 @@ model User {
 }
 
 
+model InputParams {
+  id Int @id @default(autoincrement())
+  age Int
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  prompt String
+  genere String
+  artstyle String
+  language String
+}
+
 model Book {
   id Int @id @default(autoincrement())
   title String
-  author String
   userId Int
   user User @relation(fields: [userId], references: [id])
-  image String
-  flaggedBook flaggedBook[]
+  image String[]
+  paragraphs String[]
+  flaggedBook Boolean
   Review Review[]
   bookMark bookMark[]
+  inputParams InputParams[]
 }
 
-model flaggedBook {
-  id Int @id @default(autoincrement())
-  bookId Int
-  book Book @relation(fields: [bookId], references: [id])
-  userId Int
-  reason String
-  date String
-}
- 
+
+
 model Review {
   id Int @id @default(autoincrement())
   bookId Int
