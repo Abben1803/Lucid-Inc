@@ -15,10 +15,10 @@ model User {
   email String @unique
   password String? 
   books Book[]
-  bookMark bookMark[]
+  bookMark Bookmark[]
   registrationDate DateTime @default(now())
+  isAdmin Boolean @default(false)
 }
-
 
 model InputParams {
   id Int @id @default(autoincrement())
@@ -36,32 +36,45 @@ model Book {
   title String
   userId Int
   user User @relation(fields: [userId], references: [id])
-  image String[]
-  paragraphs String[]
-  flaggedBook Boolean
-  Review Review[]
-  bookMark bookMark[]
-  inputParams InputParams[]
+  adminReview AdminReview[] // for flagging
+  bookMark Bookmark[] // for book marking 
+  inputParams InputParams[] 
+  paragraph paragraphs[]
+
 }
 
-
-
-model Review {
+model AdminReview {
   id Int @id @default(autoincrement())
   bookId Int
   book Book @relation(fields: [bookId], references: [id])
-  userId Int
-  rating Int
-  review String
-  date String
+  adminUserId Int 
+  reviewNotes String?
+  reviewedAt DateTime @default(now())
+  reviewOutcome String 
 }
 
-model bookMark {
+model paragraphs {
+  id Int @id @default(autoincrement())
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  paragraph String
+  image Image[]
+  paragraphNumber Int
+}
+
+model Image{
+  id Int @id @default(autoincrement())
+  bookId Int
+  paragraphId paragraphs @relation(fields: [bookId], references: [id])
+  image String
+}
+
+model Bookmark {
   id Int @id @default(autoincrement())
   bookId Int
   book Book @relation(fields: [bookId], references: [id])
   userId Int
   user User @relation(fields: [userId], references: [id])
-  date String
+  date DateTime @default(now())
 }
 
