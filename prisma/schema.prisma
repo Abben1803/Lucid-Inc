@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String
+  books Book[]
+  bookMark Bookmark[]
+  registrationDate DateTime @default(now())
+  isAdmin Boolean @default(false)
+}
+
+model InputParams {
+  id Int @id @default(autoincrement())
+  age Int
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  prompt String
+  genre String
+  artstyle String
+  language String
+}
+
+model Book {
+  id Int @id @default(autoincrement())
+  title String
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  adminReview AdminReview[] // for flagging
+  bookMark Bookmark[] // for book marking 
+  inputParams InputParams[] 
+  paragraph Paragraph[]
+
+}
+
+model Paragraph {
+  id Int @id @default(autoincrement())
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  paragraph String
+  image Image[]
+  paragraphNumber Int
+}
+
+model Image{
+  id Int @id @default(autoincrement())
+  paragraphID Int
+  parahraph Paragraph @relation(fields: [paragraphID], references: [id])
+  image String
+}
+
+model Bookmark {
+  id Int @id @default(autoincrement())
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  userId Int
+  user User @relation(fields: [userId], references: [id])
+  date DateTime @default(now())
+}
+
+
+model AdminReview {
+  id Int @id @default(autoincrement())
+  bookId Int
+  book Book @relation(fields: [bookId], references: [id])
+  adminUserId Int 
+  reviewedAt DateTime @default(now())
+}
