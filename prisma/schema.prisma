@@ -31,8 +31,8 @@ model InputParams {
 model Book {
   id Int @id @default(autoincrement())
   title String
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email])
   adminReview AdminReview[] // for flagging
   bookMark Bookmark[] // for book marking 
   inputParams InputParams[] 

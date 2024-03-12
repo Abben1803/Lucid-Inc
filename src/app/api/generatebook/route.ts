@@ -11,9 +11,9 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextApiRequest, res: NextApiResponse) {
     const session = await getServerSession(req, res, authOptions); // Getting our server side session.
-    const userId = session?.user?.id;
+    const userEmail = session?.user?.email; // session
 
-    if (!userId) {
+    if (!userEmail) {
         return res.status(401).json({ error: 'User not authenticated' });
     }
 
@@ -34,7 +34,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
     const book = await prisma.book.create({
         data: {
             title: title, 
-            userId, 
+            userEmail, 
             inputParams: {
                 create: { age: parseInt(age), prompt, genre, artstyle, language },
             },
