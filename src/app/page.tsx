@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBook, faCog} from '@fortawesome/free-solid-svg-icons'
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import Link from 'next/link';
+
 
 export default function Home(){
 
@@ -19,8 +21,8 @@ export default function Home(){
                     Explore the magical world of storytelling, create your
                     own unique stories & share them with friends and family.
                 </p>
-                <button className="bg-black text-white px-8 py-3 rounded shadow mb-4">Start Creating</button>
-                <button className="bg-transparent border border-black text-black px-8 py-3 rounded shadow">Log In</button>
+                {/* <button className="bg-black text-white px-8 py-3 rounded shadow mb-4">Login</button> */}
+                <Link href="/auth/login" className="bg-transparent border border-black text-black px-8 py-3 rounded shadow">Log In</Link>
             </div>
             <div className="pl-12" style={{ width: '50%' }}>
                 <div className="border border-gray-300">

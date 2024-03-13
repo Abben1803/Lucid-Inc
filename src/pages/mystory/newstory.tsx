@@ -4,21 +4,64 @@ import { faPen, faBook, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../../app/globals.css";
 import styles from './newstory.module.css'
-
+import { GetServerSidePropsContext } from 'next';
+import { authOptions } from '../../app/api/auth/[...nextauth]/route';
+import { getServerSession, Session } from 'next-auth';
+import { useEffect } from 'react';
 import React from 'react';
-import router from 'next/router';
+import { useRouter } from 'next/router';
+
 
 import Link from 'next/link';
 import { getSession } from 'next-auth/react';
 
+interface DashboardProps {
+    session: Session | null;
+}
 
-export default function newstory(){
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const session = await getServerSession(context.req, context.res, authOptions);
+  
+    if (!session) {
+      return {
+        redirect: {
+          destination: '/auth/login',
+          permanent: false,
+        },
+      };
+    }
+    const userEmail = session.user?.email || null;
+
+    
+  
+    return {
+      props: {
+        session: {
+          ...session,
+          user: {
+            email: userEmail,
+          },
+        },
+
+      },
+    };
+};
+
+export default function newstory({session} : DashboardProps){
 
     const [selectedAge, setSelectedAge] = React.useState("");
     const [selectedLanguage, setSelectedLanguage] = React.useState("");
     const [selectedGenre, setSelectedGenre] = React.useState("");
     const [selectedArtStyle, setSelectedArtStyle] = React.useState("");
     const [storyPrompt, setStoryPrompt] = React.useState("")
+
+    const router = useRouter();
+
+    useEffect(() => {
+        if(!session){
+            router.replace('auth/login');
+        }
+    }, [session, router]);
 
     const handleAgeSelection = (age: string) => {
         setSelectedAge(age);
