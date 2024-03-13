@@ -5,19 +5,23 @@ import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route'; 
 import { NextApiRequest, NextApiResponse } from 'next';
-import story from '@/pages/story/[story]';
+import { headers } from 'next/headers'
+
+
+import story from '@/pages/[story]';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: NextApiRequest, res: NextApiResponse) {
-    const session = await getServerSession(req, res, authOptions); // Getting our server side session.
+export async function POST(req: Request, res: NextApiResponse) {
+    const headersList = headers();
+    const session = await getServerSession(authOptions); // Getting our server side session.
     const userEmail = session?.user?.email; // session
 
     if (!userEmail) {
         return res.status(401).json({ error: 'User not authenticated' });
     }
 
-    const { prompt, age, language, genre, artstyle } = req.body;
+    const { prompt, age, language, genre, artstyle } = await req.json();
 
     // Generate story paragraphs
     const storyParagraphs = await getStory(prompt, age, language, genre, artstyle);
@@ -39,20 +43,20 @@ export async function POST(req: NextApiRequest, res: NextApiResponse) {
                 create: { age: parseInt(age), prompt, genre, artstyle, language },
             },
             paragraph: {
-                create: storyParagraphs.map((paragraph: string, index: number) => ({
-                    paragraph,
-                    paragraphNumber: index + 1,
-                    image: {
-                        create: {
-                            image: imagePaths[index],
-                        },
-                    },
-                })),
+                create: storyParagraphs.map((paragraph: string, index: number) => {
+                    const imageData = imagePaths[index] ? { create: { image: imagePaths[index] } } : undefined;
+                    return {
+                        paragraph,
+                        paragraphNumber: index + 1,
+                        image: imageData,
+                    };
+                }),
             },
         },
     });
 
-    return res.status(200).json({ bookId: book.id });
+    return NextResponse.json({ bookId: book.id }, { status: 200 });
+
 }
 
 
@@ -77,6 +81,7 @@ async function getStory(story: string, age: string, language: string, genre: str
     });
 
     const paragraphs = response.choices[0].message?.content?.trim().split("|") || ["No Story Generated"];
+    console.log(paragraphs);
     return paragraphs;
 }
 
@@ -88,7 +93,7 @@ async function getPrompts(story: string) {
         messages: [
             {
                 role: 'system',
-                content: 'You are a friendly assistant. Your job is to generate images prompts for each new line for the following story. Each prompt should be short and descriptive sentence. Please list all prompts seperated by "|" symbol. For example, "a good day | a spooky figure | a lit up street". You must make sure that for each paragraph of the story you generate a prompt for the image.',
+                content: 'You are a friendly assistant. Your job is to generate images prompts for each paragraph for the following story. Each prompt should be very descriptive sentence. Please list all prompts seperated by "|" symbol. For example, "a good day | a spooky figure | a lit up street". You must make sure that for each paragraph of the story you generate a prompt for the image.',
             },
             {
                 role: 'user',
@@ -106,20 +111,43 @@ async function generateAndSaveImages(prompts: string[]) {
 
     for (let i = 0; i < prompts.length; i++) {
         const prompt = prompts[i];
-        const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-1-6/text-to-image', {
+        const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 Accept: 'application/json',
-                Authorization: `Bearer ${process.env.STABILITYAI_API_KEY}`
+                Authorization: `Bearer ${process.env.STABILITYAI_API_KEY}`,
             },
-            body: JSON.stringify({ prompt })
+            body: JSON.stringify({
+                text_prompts: [
+                    {
+                        text: prompt,
+                    },
+                ],
+                cfg_scale: 7,
+                clip_guidance_preset: 'FAST_BLUE',
+                height: 512,
+                width: 512,
+                samples: 1,
+                steps: 30,
+            }),
         });
-        const data = await response.json();
-        const filename = `image-${Date.now()}-${i}.png`;
-        const imagePath = await saveImage(data.image, filename);
 
-        imagePaths.push(imagePath);
+        if (!response.ok) {
+            console.error(`Failed to generate image for prompt: ${prompt}`);
+            continue;
+        }
+
+        const data = await response.json();
+
+        if (data.artifacts && data.artifacts.length > 0) {
+            const base64Image = data.artifacts[0].base64;
+            const filename = `image-${Date.now()}-${i}.png`;
+            const imagePath = await saveImage(base64Image, filename);
+            imagePaths.push(imagePath);
+        } else {
+            console.error(`No image data received for prompt: ${prompt}`);
+        }
     }
 
     return imagePaths;
@@ -149,5 +177,6 @@ async function getTitle(story: string){
         ],
     });
     const title = response.choices[0].message?.content?.trim() || "No Title Generated";
+    console.log(title);
     return title;
 }
