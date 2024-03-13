@@ -9,12 +9,12 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 100px; /* Adjust the width as needed */
-    height: 100px; /* Adjust the height as needed */
+    width: 100px; 
+    height: 100px; 
 }
 
 .selected {
-    background-color: #4CAF50; /* Green background for selected */
-    color: white; /* White text for selected */
-    transform: scale(1.05); /* Pop out effect */
+    background-color: #4CAF50; 
+    color: white; 
+    transform: scale(1.05); 
 }
