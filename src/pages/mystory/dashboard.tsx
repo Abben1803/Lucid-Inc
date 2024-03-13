@@ -117,7 +117,9 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                 <div className="mb-8">
                     <div className="flex items-center mb-4 cursor-pointer">
                         <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
-                        <span>Settings</span>
+                        <span>
+                            <Link href= "/user/settings">Settings</Link>
+                        </span>
                     </div>
                     <div className="flex items-center cursor-pointer">
                         <FontAwesomeIcon icon={faSignOutAlt} className="fas fa-sign-out-alt text-gray-600 mr-2"/>
