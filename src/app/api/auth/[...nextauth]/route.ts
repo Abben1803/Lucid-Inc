@@ -1,7 +1,23 @@
 import { prisma } from '../../../../lib/prisma'
 import { compare } from 'bcrypt'
+import { Session } from 'inspector';
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
+
+interface SessionUser {
+  id: string;
+  email: string;
+  isAdmin: boolean;
+  randomKey: string;
+}
+
+interface JWTUser {
+  id: string;
+  email: string;
+  isAdmin: boolean;
+  randomKey: string;
+}
+
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -18,7 +34,7 @@ export const authOptions: NextAuthOptions = {
         },
         password: { label: 'Password', type: 'password' }
       },
-    async authorize(credentials): Promise<{ email: string; randomKey: string; id: string } | null> {
+    async authorize(credentials): Promise<{ email: string; randomKey: string; id: string; isAdmin: boolean } | null> {
         if (!credentials?.email || !credentials.password) {
             return null
         }
@@ -45,7 +61,8 @@ export const authOptions: NextAuthOptions = {
         return {
             id: user.id +'',
             email: user.email,
-            randomKey: 'Welcome to MUS'
+            randomKey: 'Welcome to MUS',
+            isAdmin: user.isAdmin
         }
       }
     })
@@ -58,19 +75,21 @@ export const authOptions: NextAuthOptions = {
         user: {
           ...session.user,
           id: token.id,
+          isAdmin: token.isAdmin,
           randomKey: token.randomKey
-        }
+        } as SessionUser
       }
     },
     jwt: ({ token, user }) => {
       console.log('JWT Callback', { token, user })
       if (user) {
-        const u = user as unknown as any
+        const u = user as unknown as JWTUser
         return {
           ...token,
           id: u.id,
+          isAdmin: u.isAdmin, // checking whether the user is an admin for some administrator page shenanigans
           randomKey: u.randomKey
-        }
+        } 
       }
       return token
     }
