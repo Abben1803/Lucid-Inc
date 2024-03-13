@@ -49,7 +49,7 @@ export default function RegisterPage() {
                     email: data.email,
                     password: data.password,
                 });
-                if(result?.ok){Router.push('/mystory/newstory')}
+                if(result?.ok){Router.push('/mystory/dashboard')}
                 if (result?.error) {
                     throw new Error(result.error || 'Invalid credentials');
                 }
@@ -64,7 +64,7 @@ export default function RegisterPage() {
                 if (!signupResult.ok) throw new Error('Signup failed');
             }
     
-            alert('Form submission successful');
+            // alert('Form submission successful');
         } catch (error) {
             if (error instanceof Error) {
                 alert(`Error: ${error.message}`);

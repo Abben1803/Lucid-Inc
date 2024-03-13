@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faBook, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-svg-core/styles.css';
@@ -11,13 +10,23 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { prisma } from '../../lib/prisma';
 
-import { Bookmark, Book } from '@prisma/client';
+//import { Bookmark, Book } from '@prisma/client';
+
+import { Book as PrismaBook, Bookmark } from '@prisma/client';
 
 interface DashboardProps {
   session: Session | null;
   bookmarkedBooks: (Bookmark & { book: Book })[];
   additionalBooks: Book[];
 }
+
+type Book = PrismaBook & {
+    paragraph: {
+      image: {
+        image: string;
+      }[];
+    }[];
+  };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
@@ -46,6 +55,19 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const additionalBooks = await prisma.book.findMany({
         where: {
             userEmail: userEmail? userEmail : undefined,
+        },
+        select: {
+            id: true,
+            title: true,
+            paragraph: {
+                select: {
+                    image: {
+                        select: {
+                            image:true,
+                        },
+                    },
+                },
+            },
         },
     });
   
@@ -104,32 +126,29 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                 </div>
             </aside>
             <main className="flex-1 p-6">
-                <div className="mb-8">
-                    <h1 className="text-xl font-semibold mb-4">Hello, young storyteller!</h1>
-                    <div className="grid grid-cols-4 gap-4 mb-8">
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <div key={index} className="border border-gray-300 p-4 bg-white shadow-sm">
-                                <div className="h-32 bg-gray-200"></div>
-                                <div className="mt-2 text-center">Placeholder Title</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4">Your Bookmarked Tales</h2>
-                    {bookmarkedBooks.map((bookmark) => (
-                        <div key={bookmark.id} className="flex items-center mb-2">
-                            <i className="fas fa-times text-gray-600 mr-2"></i>
-                            <span>{bookmark.book.title}</span>
+                <div className="grid grid-cols-4 gap-4 mb-8">
+                    <h1 className = "text-xl font-semibold mb-4"> Hello, young storyteller!</h1>
+                    {additionalBooks.slice(0, 4).map((book) => (
+                        <div key={book.id} className="border border-gray-300 p-4 bg-white shadow-sm">
+                        {book.paragraph[0]?.image[0]?.image ? (
+                            <img
+                            src={book.paragraph[0].image[0].image}
+                            alt={book.title}
+                            className="h-32 object-cover w-full"
+                            />
+                        ) : (
+                            <div className="h-32 bg-gray-200"></div>
+                        )}
+                        <div className="mt-2 text-center">{book.title}</div>
                         </div>
                     ))}
                 </div>
-                <div>
+                <div className = "mb-8">
                     <h2 className="text-lg font-semibold mb-4">Your Additional Tales</h2>
-                    {Array.from({ length: 3 }).map((_, index) => (
-                        <div key={index} className="flex items-center mb-2">
+                    {additionalBooks.map((recentbooks) => (
+                        <div key={recentbooks.id} className="flex items-center mb-2">
                             <i className="fas fa-times text-gray-600 mr-2"></i>
-                            <span>Placeholder Tale</span>
+                            <span>{recentbooks.title}</span>
                         </div>
                     ))}
                 </div>
