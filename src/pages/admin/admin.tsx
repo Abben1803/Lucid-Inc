@@ -33,10 +33,10 @@ export default function Admin({ newBooks }: AdminProps) {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
 
-  if (!session || !session.user?.email && !session.user?.isAdmin) {
+  if (!session || !session.user?.isAdmin) {
     return {
       redirect: {
-        destination: '/auth/login',
+        destination: '/notfound/',
         permanent: false,
       },
     };
