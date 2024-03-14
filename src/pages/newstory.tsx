@@ -24,7 +24,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     if (!session) {
       return {
         redirect: {
-          destination: '/auth/login',
+          destination: '/login',
           permanent: false,
         },
       };
@@ -56,11 +56,11 @@ export default function newstory({session} : DashboardProps){
 
     const router = useRouter();
 
-    useEffect(() => {
-        if(!session){
-            router.replace('auth/login');
-        }
-    }, [session, router]);
+    // useEffect(() => {
+    //     if(!session){
+    //         router.replace('auth/login');
+    //     }
+    // }, [session, router]);
 
     const handleAgeSelection = (age: string) => {
         setSelectedAge(age);
@@ -106,7 +106,7 @@ export default function newstory({session} : DashboardProps){
         const data = await response.json();
     
         if (data.bookId) {
-            router.push(`/app/newstory/${data.bookId}`);
+            router.push(`/${data.bookId}`);
         } else {
             console.error('Failed to generate book');
         }

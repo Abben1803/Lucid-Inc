@@ -1,6 +1,6 @@
 
 import React from 'react';
-import "../../app/globals.css";
+import "../app/globals.css";
 import { z } from 'zod';
 import { signIn } from 'next-auth/react';
 import Router from 'next/router';
@@ -49,7 +49,7 @@ export default function RegisterPage() {
                     email: data.email,
                     password: data.password,
                 });
-                if(result?.ok){Router.push('/mystory/dashboard')}
+                if(result?.ok){Router.push('/dashboard')}
                 if (result?.error) {
                     throw new Error(result.error || 'Invalid credentials');
                 }

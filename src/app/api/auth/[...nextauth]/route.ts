@@ -74,9 +74,9 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
+          id: token.id || '',
           isAdmin: token.isAdmin,
-          randomKey: token.randomKey
+          randomKey: token.randomKey || ''
         } as SessionUser
       }
     },

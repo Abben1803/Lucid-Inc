@@ -24,17 +24,19 @@ type Book = PrismaBook & {
     paragraph: {
       image: {
         image: string;
-      }[];
+      };
     }[];
   };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
+    console.log('Session in getServerSideProps:', session);
+
   
     if (!session) {
       return {
         redirect: {
-          destination: '/auth/login',
+          destination: '/login',
           permanent: false,
         },
       };
@@ -59,7 +61,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
             id: true,
             title: true,
-            paragraph: {
+            paragraphs: {
                 select: {
                     image: {
                         select: {
@@ -92,11 +94,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 export default function dashboard({session, bookmarkedBooks, additionalBooks}: DashboardProps){
     const router = useRouter();
 
-    useEffect(() => {
-        if(!session){
-            router.replace('auth/login');
-        }
-    }, [session, router]);
 
     return(
         <div className="flex h-screen bg-gray-100 text-black">
@@ -105,8 +102,9 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                     <div className="text-2xl font-bold mb-6">M.U.S.</div>
                     <div className="flex items-center mb-4 cursor-pointer">
                         <FontAwesomeIcon icon={faPen} className="text-gray-600 mr-2"/>
-                        <span>New Story</span>
-                        <Link href="./newstory"/>
+                        <span>
+                        <Link href="/newstory"> New Story</Link>
+                        </span>
 
                     </div>
                     <div className="flex items-center mb-4 cursor-pointer">
@@ -118,7 +116,7 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                     <div className="flex items-center mb-4 cursor-pointer">
                         <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
                         <span>
-                            <Link href= "/user/settings">Settings</Link>
+                            <Link href= "/settings">Settings</Link>
                         </span>
                     </div>
                     <div className="flex items-center cursor-pointer">
@@ -128,13 +126,18 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                 </div>
             </aside>
             <main className="flex-1 p-6">
-                <div className="grid grid-cols-4 gap-4 mb-8">
-                    <h1 className = "text-xl font-semibold mb-4"> Hello, young storyteller!</h1>
-                    {additionalBooks.slice(0, 4).map((book) => (
+                <h1 className = "text-xl font-semibold mb-4"> Hello, young storyteller!</h1>
+                { /* wrap in a card*/}
+                <div className="bg-white p-6 shadow-sm rounded-lg mb-8"> 
+                <h2 className="text-lg font-semibold mb-4">Your Recently Created Books</h2>
+                { /* add pagination after 8 books created*/}
+                
+                <div className="grid grid-cols-4 gap-4 mb-8">              
+                    {additionalBooks.slice(0, 8).map((book) => (
                         <div key={book.id} className="border border-gray-300 p-4 bg-white shadow-sm">
-                        {book.paragraph[0]?.image[0]?.image ? (
+                        {book.paragraph?.[0]?.image?.image ? (
                             <img
-                            src={book.paragraph[0].image[0].image}
+                            src={book.paragraph[0].image.image}
                             alt={book.title}
                             className="h-32 object-cover w-full"
                             />
@@ -144,6 +147,7 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
                         <div className="mt-2 text-center">{book.title}</div>
                         </div>
                     ))}
+                </div>
                 </div>
                 <div className = "mb-8">
                     <h2 className="text-lg font-semibold mb-4">Your Additional Tales</h2>
