@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCog, faPen, faBook, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import "../app/globals.css";
+import AsideComponent from '@/components/AsideComponent';
 
 
 
@@ -65,32 +66,7 @@ export default function Settings({ user }: SettingsProps) {
 
     return (
         <div className="flex h-screen bg-gray-100 text-black">
-            <aside className="w-64 bg-white p-6 border-r border-gray-300">
-                <div className="mb-8">
-                    <div className="text-2xl font-bold mb-6">M.U.S.</div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faPen} className="text-gray-600 mr-2"/>
-                        <span>New Story</span>
-                        <Link href="./newstory"/>
-                    </div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faBook} className="text-gray-600 mr-2"/>
-                        <span>My Stories</span>
-                    </div>
-                </div>
-                <div className="mb-8">
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
-                        <span>Settings</span>
-                </div>
-                    <div className="flex items-center cursor-pointer">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="fas fa-sign-out-alt text-gray-600 mr-2"/>
-                        <span>Log out</span>
-                        {/* I have to next.link to the pages */}
-                        <Link href="/settings"/>
-                    </div>
-                </div>
-            </aside>
+            <AsideComponent/>
             <main className="flex flex-1 items-center justify-center">
                 <div className="w-full max-w-lg">
                     <h1 className="text-xl font-bold mb-8">Settings</h1>

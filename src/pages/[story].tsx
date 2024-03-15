@@ -6,6 +6,7 @@ import "../app/globals.css";
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import AsideComponent from '../components/AsideComponent';
 
 interface Book {
     id: number;
@@ -83,32 +84,8 @@ export default function story() {
 
     return(
         <div className="flex h-screen bg-gray-100 text-black">
-            <aside className="w-64 bg-white p-6 border-r border-gray-300">
-                <div className="mb-8">
-                    <div className="text-2xl font-bold mb-6">M.U.S.</div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faPen} className="text-gray-600 mr-2"/>
-                        <span>New Story</span>
-                        <Link href="./newstory"/>
-                    </div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faBook} className="text-gray-600 mr-2"/>
-                        <span>My Stories</span>
-                    </div>
-                </div>
-                <div className="mb-8">
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
-                        <span>Settings</span>
-                    </div>
-                    <div className="flex items-center cursor-pointer">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="fas fa-sign-out-alt text-gray-600 mr-2"/>
-                        <span>Log out</span>
-                        <Link href="/settings"/>
-                    </div>
-                </div>
-            </aside>
-            <main className = "flex-1 max-w-4x1 p-8 justify-center items-center">
+            <AsideComponent />
+            <main className = "flex  p-8 justify-center items-center">
                 
                 <div className="w-4/5 p-8">
                     <div className="flex justify-end mb-4">
@@ -129,7 +106,7 @@ export default function story() {
                                     />
                                 </div>
                             )}
-                            <p className="text-black text-sm">
+                            <p className="text-black text-sm border">
                                 {book.paragraphs[currentParagraphIndex].paragraph}
                             </p>
                         </div>

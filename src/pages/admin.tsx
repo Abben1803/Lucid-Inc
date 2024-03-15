@@ -30,6 +30,7 @@ export default function Admin({ newBooks }: AdminProps) {
   );
 }
 
+// need to fix this function i need to implement book marking
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
 

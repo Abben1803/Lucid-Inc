@@ -4,6 +4,10 @@ import "../app/globals.css";
 import { z } from 'zod';
 import { signIn } from 'next-auth/react';
 import Router from 'next/router';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
+import { GetServerSidePropsContext } from 'next';
+
 
 const loginSchema = z.object({
     email: z.string().min(1, 'Email is required').email('Invalid email'),
@@ -96,4 +100,20 @@ export default function RegisterPage() {
             </div>
         </div>
     );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const session = await getServerSession(context.req, context.res, authOptions);
+    if (session) {
+        return {
+            redirect: {
+                destination: '/dashboard',
+                permanent: false,
+            },
+        };
+    }
+    return {
+        props: {},
+    };
+
 }
