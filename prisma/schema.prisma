@@ -33,10 +33,10 @@ model Book {
   title String
   userEmail String
   user User @relation(fields: [userEmail], references: [email])
-  adminReview AdminReview[] // for flagging
-  bookMark Bookmark[] // for book marking 
+  adminReview AdminReview? // for flagging
+  bookMark Bookmark? // for book marking 
   inputParams InputParams[] 
-  paragraph Paragraph[]
+  paragraphs Paragraph[]
   createdAt DateTime @default(now())
 }
 
@@ -45,20 +45,20 @@ model Paragraph {
   bookId Int
   book Book @relation(fields: [bookId], references: [id])
   paragraph String
-  image Image[]
+  image Image?
   paragraphNumber Int
 }
 
 model Image{
   id Int @id @default(autoincrement())
-  paragraphID Int
-  parahraph Paragraph @relation(fields: [paragraphID], references: [id])
+  paragraphID Int @unique
+  paragraph Paragraph @relation(fields: [paragraphID], references: [id])
   image String
 }
 
 model Bookmark {
   id Int @id @default(autoincrement())
-  bookId Int
+  bookId Int @unique
   book Book @relation(fields: [bookId], references: [id])
   userId Int
   user User @relation(fields: [userId], references: [id])
@@ -68,7 +68,7 @@ model Bookmark {
 
 model AdminReview {
   id Int @id @default(autoincrement())
-  bookId Int
+  bookId Int @unique
   book Book @relation(fields: [bookId], references: [id])
   adminUserId Int 
   reviewedAt DateTime @default(now())

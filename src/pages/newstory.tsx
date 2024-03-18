@@ -6,9 +6,9 @@ import styles from '../components/newstory.module.css'
 import { GetServerSidePropsContext } from 'next';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { getServerSession, Session } from 'next-auth';
-import { useEffect } from 'react';
 import React from 'react';
 import { useRouter } from 'next/router';
+import AsideComponent from '../components/AsideComponent';
 
 
 import Link from 'next/link';
@@ -18,33 +18,6 @@ interface DashboardProps {
     session: Session | null;
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getServerSession(context.req, context.res, authOptions);
-  
-    if (!session) {
-      return {
-        redirect: {
-          destination: '/auth/login',
-          permanent: false,
-        },
-      };
-    }
-    const userEmail = session.user?.email || null;
-
-    
-  
-    return {
-      props: {
-        session: {
-          ...session,
-          user: {
-            email: userEmail,
-          },
-        },
-
-      },
-    };
-};
 
 export default function newstory({session} : DashboardProps){
 
@@ -55,13 +28,6 @@ export default function newstory({session} : DashboardProps){
     const [storyPrompt, setStoryPrompt] = React.useState("")
 
     const router = useRouter();
-
-    useEffect(() => {
-        if(!session){
-            router.replace('auth/login');
-        }
-    }, [session, router]);
-
     const handleAgeSelection = (age: string) => {
         setSelectedAge(age);
     };
@@ -106,7 +72,7 @@ export default function newstory({session} : DashboardProps){
         const data = await response.json();
     
         if (data.bookId) {
-            router.push(`/app/newstory/${data.bookId}`);
+            router.push(`/${data.bookId}`);
         } else {
             console.error('Failed to generate book');
         }
@@ -114,31 +80,8 @@ export default function newstory({session} : DashboardProps){
 
     return(
         <div className="flex h-screen bg-gray-100 text-black">
-            <aside className="w-64 bg-white p-6 border-r border-gray-300">
-                <div className="mb-8">
-                    <div className="text-2xl font-bold mb-6">M.U.S.</div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faPen} className="text-gray-600 mr-2"/>
-                        <span>New Story</span>
-                    </div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faBook} className="text-gray-600 mr-2"/>
-                        <span>My Stories</span>
-                    </div>
-                </div>
-                <div className="mb-8">
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
-                        <span>Settings</span>
-                    </div>
-                    <div className="flex items-center cursor-pointer">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="fas fa-sign-out-alt text-gray-600 mr-2"/>
-                        <span>Log out</span>
-                    </div>
-                </div>
-            </aside>
+            <AsideComponent />
             <div className="flex-1 bg-gray-100 p-8">
-                
                 <main>
                     <section className="mb-4">
                         <h2 className="font-semibold mb-2">Create Your Own Story</h2>
@@ -223,7 +166,33 @@ export default function newstory({session} : DashboardProps){
             </div>
         </div>
     );
-
-
 }
 
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+    const session = await getServerSession(context.req, context.res, authOptions);
+  
+    if (!session) {
+      return {
+        redirect: {
+          destination: '/login',
+          permanent: false,
+        },
+      };
+    }
+    const userEmail = session.user?.email || null;
+
+    
+  
+    return {
+      props: {
+        session: {
+          ...session,
+          user: {
+            email: userEmail,
+          },
+        },
+
+      },
+    };
+};

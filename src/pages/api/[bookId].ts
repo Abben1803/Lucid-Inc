@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '../../app/api/auth/[...nextauth]/route';
 //import "../../app/global.css";
 
 const prisma = new PrismaClient();
@@ -14,6 +14,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if(!session) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
+
+  // need to check if user is admin as well so he is able to see the content not sure how to implement yet.
 
   const userEmail = session.user?.email;
 
@@ -40,6 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       console.log('Retrieved book from database:', book);
+
 
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });

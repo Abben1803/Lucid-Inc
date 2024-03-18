@@ -1,14 +1,15 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faBook, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSession, Session } from 'next-auth';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { prisma } from '../lib/prisma';
+import styles from '../components/newstory.module.css'
+import AsideComponent from '../components/AsideComponent';
+
 
 //import { Bookmark, Book } from '@prisma/client';
 
@@ -24,17 +25,19 @@ type Book = PrismaBook & {
     paragraph: {
       image: {
         image: string;
-      }[];
+      };
     }[];
   };
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
+    console.log('Session in getServerSideProps:', session);
+
   
     if (!session) {
       return {
         redirect: {
-          destination: '/auth/login',
+          destination: '/login',
           permanent: false,
         },
       };
@@ -59,7 +62,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         select: {
             id: true,
             title: true,
-            paragraph: {
+            paragraphs: {
                 select: {
                     image: {
                         select: {
@@ -92,62 +95,55 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 export default function dashboard({session, bookmarkedBooks, additionalBooks}: DashboardProps){
     const router = useRouter();
 
-    useEffect(() => {
-        if(!session){
-            router.replace('auth/login');
-        }
-    }, [session, router]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
+    const pages = Math.ceil(additionalBooks.length / itemsPerPage);
+ 
+    const startIndex = (currentPage -1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentBooks = additionalBooks.slice(startIndex, endIndex);
+
+    console.log('Current page:', currentPage);
 
     return(
         <div className="flex h-screen bg-gray-100 text-black">
-            <aside className="w-64 bg-white p-6 border-r border-gray-300">
-                <div className="mb-8">
-                    <div className="text-2xl font-bold mb-6">M.U.S.</div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faPen} className="text-gray-600 mr-2"/>
-                        <span>New Story</span>
-                        <Link href="./newstory"/>
-
-                    </div>
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon={faBook} className="text-gray-600 mr-2"/>
-                        <span>My Stories</span>
-                    </div>
-                </div>
-                <div className="mb-8">
-                    <div className="flex items-center mb-4 cursor-pointer">
-                        <FontAwesomeIcon icon ={faCog} className=" text-gray-600 mr-2"/>
-                        <span>
-                            <Link href= "/user/settings">Settings</Link>
-                        </span>
-                    </div>
-                    <div className="flex items-center cursor-pointer">
-                        <FontAwesomeIcon icon={faSignOutAlt} className="fas fa-sign-out-alt text-gray-600 mr-2"/>
-                        <span>Log out</span>
-                    </div>
-                </div>
-            </aside>
+            <AsideComponent />
             <main className="flex-1 p-6">
-                <div className="grid grid-cols-4 gap-4 mb-8">
-                    <h1 className = "text-xl font-semibold mb-4"> Hello, young storyteller!</h1>
-                    {additionalBooks.slice(0, 4).map((book) => (
-                        <div key={book.id} className="border border-gray-300 p-4 bg-white shadow-sm">
-                        {book.paragraph[0]?.image[0]?.image ? (
-                            <img
-                            src={book.paragraph[0].image[0].image}
-                            alt={book.title}
-                            className="h-32 object-cover w-full"
-                            />
-                        ) : (
-                            <div className="h-32 bg-gray-200"></div>
-                        )}
-                        <div className="mt-2 text-center">{book.title}</div>
-                        </div>
-                    ))}
+                <h1 className="text-xl font-semibold mb-4">Hello, young storyteller!</h1>
+                <div className="bg-white p-6 shadow-sm rounded-lg mb-8"> 
+                    <h2 className="text-lg font-semibold mb-4">Your Recently Created Books</h2>
+                    <div className={styles.gridContainer}>          
+                        {currentBooks.map((book) => (
+                            <Link key={book.id} href={`/${book.id}`} className={styles.bookCard}>
+                                {book.paragraph?.[0]?.image?.image ? (
+                                    <img
+                                        src={book.paragraph[0].image?.toString()}
+                                        alt={book.title}
+                                        className="styles.bookImage"
+                                    />
+                                ) : (
+                                    <div className={'${styles.bookImage} h-32'}></div>
+                                )}
+                                <div className={'${styles.title} text-center mt'}>{book.title}</div>
+                            </Link>
+                        ))}
+                    </div>
+                    <div className="flex justify-center">
+                        {Array.from({ length: pages }, (_, i) => (
+                            <button
+                                key={i + 1}
+                                onClick={() => setCurrentPage(i + 1)}
+                                className={`p-2 ${currentPage === i + 1 ? 'bg-gray-300' : ''}`}
+                            >
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
                 </div>
-                <div className = "mb-8">
+                <div className="mb-8">
                     <h2 className="text-lg font-semibold mb-4">Your Additional Tales</h2>
-                    {additionalBooks.map((recentbooks) => (
+                    {additionalBooks.slice(0,4).map((recentbooks) => (
                         <div key={recentbooks.id} className="flex items-center mb-2">
                             <i className="fas fa-times text-gray-600 mr-2"></i>
                             <span>{recentbooks.title}</span>

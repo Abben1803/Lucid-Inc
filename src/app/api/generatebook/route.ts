@@ -42,7 +42,7 @@ export async function POST(req: Request, res: NextApiResponse) {
             inputParams: {
                 create: { age: parseInt(age), prompt, genre, artstyle, language },
             },
-            paragraph: {
+            paragraphs: {
                 create: storyParagraphs.map((paragraph: string, index: number) => {
                     const imageData = imagePaths[index] ? { create: { image: imagePaths[index] } } : undefined;
                     return {
