@@ -27,10 +27,12 @@ export async function POST(req: Request, res: NextApiResponse) {
     const storyParagraphs = await getStory(prompt, age, language, genre, artstyle);
 
     // Generate image prompts
-    const imagePrompts = await getPrompts(storyParagraphs.join('|'));
+    const imagePrompts = await getPrompts(storyParagraphs.join('|'), genre);
 
     // Generate and save images
-    const imagePaths = await generateAndSaveImages(imagePrompts);
+    //const imagePaths = await generateAndSaveImages(imagePrompts);
+
+    const imagePaths = await generateAndSaveImagesDallE(imagePrompts);
 
     // Generate title
     const title = await getTitle(storyParagraphs.join('|'));
@@ -85,19 +87,19 @@ async function getStory(story: string, age: string, language: string, genre: str
     return paragraphs;
 }
 
-async function getPrompts(story: string) {
-    const OpenAI = require('openai')
+async function getPrompts(story: string, artstyle: string) {
+    const OpenAI = require('openai');
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
             {
                 role: 'system',
-                content: 'You are a friendly assistant. Your job is to generate images prompts for each paragraph for the following story. Each prompt should be very descriptive sentence. Please list all prompts seperated by "|" symbol. For example, "a good day | a spooky figure | a lit up street". You must make sure that for each paragraph of the story you generate a prompt for the image.',
+                content: 'You are a friendly assistant. Your job is to generate image prompts for each paragraph of the following story. Each prompt should be a very descriptive sentence that incorporates the specified art style. Please list all prompts separated by the "|" symbol. For example, "a good day in comic style | a spooky figure in comic style | a lit up street in comic style". You must make sure that for each paragraph of the story, you generate a prompt for the image that includes the art style.',
             },
             {
                 role: 'user',
-                content: `story: ${story}`,
+                content: `story: ${story}\nartstyle: ${artstyle}`,
             },
         ],
     });
@@ -106,7 +108,7 @@ async function getPrompts(story: string) {
     return prompts;
 }
 
-async function generateAndSaveImages(prompts: string[]) {
+async function generateAndSaveImagesStability(prompts: string[]) {
     const imagePaths = [];
 
     for (let i = 0; i < prompts.length; i++) {
@@ -147,6 +149,39 @@ async function generateAndSaveImages(prompts: string[]) {
             imagePaths.push(imagePath);
         } else {
             console.error(`No image data received for prompt: ${prompt}`);
+        }
+    }
+
+    return imagePaths;
+}
+
+
+async function generateAndSaveImagesDallE(prompts: string[]) {
+    const imagePaths = [];
+    const OpenAI = require('openai');
+    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+
+    for (let i = 0; i < prompts.length; i++) {
+        const prompt = prompts[i];
+        try {
+            const response = await openai.images.generate({
+                prompt: prompt,
+                model: "dall-e-3",
+                n: 1,
+                size: '1024x1024',
+                response_format: "b64_json",
+            });
+
+            if (response.data && response.data.length > 0) {
+                const base64Image = response.data[0].b64_json;
+                const filename = `image-${Date.now()}-${i}.png`;
+                const imagePath = await saveImage(base64Image, filename);
+                imagePaths.push(imagePath);
+            } else {
+                console.error(`No image data received for prompt: ${prompt}`);
+            }
+        } catch (error) {
+            console.error(`Failed to generate image for prompt: ${prompt}`, error);
         }
     }
 
