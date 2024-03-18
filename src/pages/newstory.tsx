@@ -103,7 +103,7 @@ export default function newstory({session} : DashboardProps){
                             <div>
                                 <label className="block mb-1">Choose your language</label>
                                 <div className="flex gap-2">
-                                    {['English', '中文', 'हिंदी'].map((language) => (
+                                    {['English', 'हिंदी', 'Arabic'].map((language) => (
                                         <button
                                             key={language}
                                             className={`border-2 border-black px-4 py-2 ${selectedLanguage === language ? styles.selected : ''}`}

@@ -32,12 +32,13 @@ export default function story() {
     
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            
             switch (event.key) {
                 case 'ArrowRight':
-                    setCurrentParagraphIndex((prevIndex) => Math.min(prevIndex + 1, book?.paragraphs?.length ?? 0 - 1));
+                    setCurrentParagraphIndex((prevIndex) => Math.min(prevIndex + 1, book?.paragraphs?.length ?? 1));
                     break;
                 case 'ArrowLeft':
-                    setCurrentParagraphIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+                    setCurrentParagraphIndex((prevIndex) => Math.max(prevIndex - 1, 1));
                     break;
                 default:
                     break;
@@ -46,7 +47,7 @@ export default function story() {
     
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [book?.paragraphs.length]);
+    }, [book?.paragraphs?.length ?? 1]);
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -78,8 +79,8 @@ export default function story() {
     if (!book) return <div>Loading...</div>;
         
 
-    const totalPages = book.paragraphs.length-1;
-    console.log("Current image URL:", book.paragraphs[currentParagraphIndex].image || 'No Image');
+    const totalPages = book.paragraphs.length;
+    console.log("Current image URL:", book.paragraphs[currentParagraphIndex-1].image || 'No Image');
 
     return(
         <div className="flex h-screen bg-gray-100 text-black">
@@ -94,18 +95,18 @@ export default function story() {
                             <div className="text-gray-600 font-bold text-lg">{book.title}</div>
                         </div>
                         <div className="flex-1 w-full max-w-2xl overflow-y-auto">
-                            {book.paragraphs[currentParagraphIndex] && (
+                            {book.paragraphs[currentParagraphIndex - 1] && (
                                 <div className="flex justify-center items-center pt-12 mb-7">
                                     <img
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs[currentParagraphIndex].image?.toString()}
+                                        src={book.paragraphs[currentParagraphIndex - 1].image?.toString()}
                                     />
                                 </div>
                             )}
                             <p className="text-black text-sm border">
-                                {book.paragraphs[currentParagraphIndex].paragraph}
+                                {book.paragraphs[currentParagraphIndex - 1].paragraph}
                             </p>
                         </div>
                     </div>
@@ -119,7 +120,7 @@ export default function story() {
                         <div className="text-gray-600 text-sm">{currentParagraphIndex}</div>
                         <div className="text-gray-600 text-sm">{totalPages}</div>
                         <button
-                            onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages - 1))}
+                            onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages))}
                             className="text-gray-600 text-sm"
                         >
                             Next

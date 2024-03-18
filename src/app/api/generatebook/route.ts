@@ -64,7 +64,7 @@ async function getStory(story: string, age: string, language: string, genre: str
     const OpenAI = require('openai');
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-    const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
+    const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt ${story}. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
 
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
