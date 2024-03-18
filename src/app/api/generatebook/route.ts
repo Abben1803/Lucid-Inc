@@ -27,10 +27,8 @@ export async function POST(req: Request, res: NextApiResponse) {
     const storyParagraphs = await getStory(prompt, age, language, genre, artstyle);
 
     // Generate image prompts
-    const imagePrompts = await getPrompts(storyParagraphs.join('|'), genre);
+    const imagePrompts = await getPrompts(storyParagraphs.join('|'), artstyle);
 
-    // Generate and save images
-    //const imagePaths = await generateAndSaveImages(imagePrompts);
 
     const imagePaths = await generateAndSaveImagesDallE(imagePrompts);
 
@@ -95,7 +93,7 @@ async function getPrompts(story: string, artstyle: string) {
         messages: [
             {
                 role: 'system',
-                content: 'You are a friendly assistant. Your job is to generate image prompts for each paragraph of the following story. Each prompt should be a very descriptive sentence that incorporates the specified art style. Please list all prompts separated by the "|" symbol. For example, "a good day in comic style | a spooky figure in comic style | a lit up street in comic style". You must make sure that for each paragraph of the story, you generate a prompt for the image that includes the art style.',
+                content: 'You are a friendly assistant. Your job is to generate highly descriptive image prompts for each paragraph of the following story. Each prompt should capture the key elements, actions, and emotions described in the corresponding paragraph, while explicitly incorporating the specified art style. The prompts should provide enough detail to create vivid and engaging images that accurately represent the story. Make sure to include the art style in each prompt. Please list all prompts separated by the "|" symbol.',
             },
             {
                 role: 'user',
