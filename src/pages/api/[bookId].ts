@@ -15,6 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
+  // need to check if user is admin as well so he is able to see the content not sure how to implement yet.
+
   const userEmail = session.user?.email;
 
   if(!userEmail) {

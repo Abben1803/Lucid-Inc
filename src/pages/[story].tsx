@@ -1,9 +1,6 @@
 import React, { useEffect, useState} from 'react';
 import Image from 'next/image';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faBook, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import "../app/globals.css";
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
@@ -28,7 +25,7 @@ interface Image {
 export default function story() { 
     const [book, setBook] = useState<Book | null>(null);
     const [title, setTitle] = useState("");
-    const [currentParagraphIndex, setCurrentParagraphIndex] = useState(0);
+    const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
     const { story: bookId } = router.query;
     const { data: session } = useSession();
@@ -42,6 +39,8 @@ export default function story() {
                 case 'ArrowLeft':
                     setCurrentParagraphIndex((prevIndex) => Math.max(prevIndex - 1, 0));
                     break;
+                default:
+                    break;
             }
         };
     
@@ -52,7 +51,7 @@ export default function story() {
     useEffect(() => {
         const fetchBook = async () => {
             try{
-                if(bookId && session) {
+                if(bookId && session ) {
                     const url = `/api/${bookId}`;
                     console.log('Fetching book from URL:', url);
                     const response = await fetch(url);
@@ -85,24 +84,23 @@ export default function story() {
     return(
         <div className="flex h-screen bg-gray-100 text-black">
             <AsideComponent />
-            <main className = "flex  p-8 justify-center items-center">
-                
-                <div className="w-4/5 p-8">
+            <main className="flex-1 overflow-y-auto">
+                <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
                         <button className="text-red-500 text-sm">Flag Story</button>
                     </div>
-                    <div className="flex flex-col items-center">
+                    <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">
                             <div className="text-gray-600 font-bold text-lg">{book.title}</div>
                         </div>
-                        <div className="p-30">
+                        <div className="flex-1 w-full max-w-2xl overflow-y-auto">
                             {book.paragraphs[currentParagraphIndex] && (
-                                <div className= "flex justify-center items-center pt-12 mb-7">
+                                <div className="flex justify-center items-center pt-12 mb-7">
                                     <img
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs[currentParagraphIndex].image?.toString()} 
+                                        src={book.paragraphs[currentParagraphIndex].image?.toString()}
                                     />
                                 </div>
                             )}
@@ -111,20 +109,22 @@ export default function story() {
                             </p>
                         </div>
                     </div>
-                    {/* <div className="flex justify-end">
-                        <div className="flex flex-col items-end">
-                            <button className="text-gray-600 text-sm mb-2"><i className="fas fa-font"></i> Text Style</button>
-                            <button className="text-gray-600 text-sm"><i className="fas fa-text-height"></i> Text Size</button>
-                        </div>
-                    </div> */}
-
                     <div className="flex justify-between items-center mt-4">
-                        <button onClick={() => setCurrentParagraphIndex(prev => Math.max(prev - 1, 0))} className="text-gray-600 text-sm">Back</button>
+                        <button
+                            onClick={() => setCurrentParagraphIndex(prev => Math.max(prev - 1, 0))}
+                            className="text-gray-600 text-sm"
+                        >
+                            Back
+                        </button>
                         <div className="text-gray-600 text-sm">{currentParagraphIndex}</div>
                         <div className="text-gray-600 text-sm">{totalPages}</div>
-                        <button onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages - 1))} className="text-gray-600 text-sm">Next</button>
+                        <button
+                            onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages - 1))}
+                            className="text-gray-600 text-sm"
+                        >
+                            Next
+                        </button>
                     </div>
-                    
                 </div>
             </main>
         </div>

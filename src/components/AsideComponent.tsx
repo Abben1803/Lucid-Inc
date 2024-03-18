@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 const AsideComponent = () => {
     return (
-        <aside className="w-64 bg-white p-6 border-r border-gray-300">
+        <aside className="w-64 bg-white p-6 border-r border-gray-300 h-screen">
             <div className="mb-8">
                 <div className="text-2xl font-bold mb-6">M.U.S.</div>
                 <div className="flex items-center mb-4 cursor-pointer">
