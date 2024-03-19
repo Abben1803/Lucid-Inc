@@ -4,6 +4,9 @@ import { Session } from 'inspector';
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
+import GoogleProvider from "next-auth/providers/google"
+
+
 interface SessionUser {
   id: string;
   email: string;
@@ -65,7 +68,11 @@ export const authOptions: NextAuthOptions = {
             isAdmin: user.isAdmin
         }
       }
-    })
+    }), GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || ''
+    
+    }),
   ],
   callbacks: {
     session: ({ session, token }) => {
