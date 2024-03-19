@@ -82,17 +82,17 @@ export default function story() {
     const totalPages = book.paragraphs.length;
     console.log("Current image URL:", book.paragraphs[currentParagraphIndex-1].image || 'No Image');
 
-    return(
-        <div className="flex h-screen bg-gray-100 text-black">
+    return (
+        <div className="flex h-screen bg-base-200 text-base-content">
             <AsideComponent />
             <main className="flex-1 overflow-y-auto">
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
-                        <button className="text-red-500 text-sm">Flag Story</button>
+                        <button className="text-error text-sm">Flag Story</button>
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">
-                            <div className="text-gray-600 font-bold text-lg">{book.title}</div>
+                            <div className="text-base-content font-bold text-lg">{book.title}</div>
                         </div>
                         <div className="flex-1 w-full max-w-2xl overflow-y-auto">
                             {book.paragraphs[currentParagraphIndex - 1] && (
@@ -105,7 +105,7 @@ export default function story() {
                                     />
                                 </div>
                             )}
-                            <p className="text-black text-sm border">
+                            <p className="text-base-content text-sm border border-base-300 p-4">
                                 {book.paragraphs[currentParagraphIndex - 1].paragraph}
                             </p>
                         </div>
@@ -113,15 +113,15 @@ export default function story() {
                     <div className="flex justify-between items-center mt-4">
                         <button
                             onClick={() => setCurrentParagraphIndex(prev => Math.max(prev - 1, 0))}
-                            className="text-gray-600 text-sm"
+                            className="btn btn-sm btn-ghost"
                         >
                             Back
                         </button>
-                        <div className="text-gray-600 text-sm">{currentParagraphIndex}</div>
-                        <div className="text-gray-600 text-sm">{totalPages}</div>
+                        <div className="text-base-content text-sm">{currentParagraphIndex}</div>
+                        <div className="text-base-content text-sm">{totalPages}</div>
                         <button
                             onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages))}
-                            className="text-gray-600 text-sm"
+                            className="btn btn-sm btn-ghost"
                         >
                             Next
                         </button>
@@ -129,6 +129,5 @@ export default function story() {
                 </div>
             </main>
         </div>
-        
     );
 }
