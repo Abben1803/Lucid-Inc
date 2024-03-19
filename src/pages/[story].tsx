@@ -29,6 +29,7 @@ export default function story() {
     const router = useRouter();
     const { story: bookId } = router.query;
     const { data: session } = useSession();
+    const [isBookmarked, setIsBookmarked] = useState(false);
     
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -53,7 +54,7 @@ export default function story() {
         const fetchBook = async () => {
             try{
                 if(bookId && session ) {
-                    const url = `/api/${bookId}`;
+                    const url = `/api/book/${bookId}`;
                     console.log('Fetching book from URL:', url);
                     const response = await fetch(url);
                     if(response.ok){
@@ -73,7 +74,28 @@ export default function story() {
         if (session) {
           fetchBook();
         }
-      }, [bookId, session]);
+    }, [bookId, session]);
+
+    const handleBookmarkClick = async (event: any) => {
+        event.preventDefault();
+      
+        try {
+          if (bookId && session) {
+            const response = await fetch(isBookmarked ? '/api/create/remove' : '/api/remove/create', {
+              method: isBookmarked ? 'DELETE' : 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ bookId }),
+            });
+            if (response.ok) {
+              setIsBookmarked(!isBookmarked);
+            }
+          }
+        } catch (error) {
+          console.error('Error updating bookmark:', error);
+        }
+    };
 
     if(!session) return <div>Unauthorized</div>;
     if (!book) return <div>Loading...</div>;
@@ -88,6 +110,13 @@ export default function story() {
             <main className="flex-1 overflow-y-auto">
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
+                        <button
+                            className={`btn btn-sm ${isBookmarked ? 'btn-warning' : 'btn-ghost'}`}
+                            onClick={handleBookmarkClick}
+                            disabled={isBookmarked}
+                            >
+                            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                        </button>
                         <button className="text-error text-sm">Flag Story</button>
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">

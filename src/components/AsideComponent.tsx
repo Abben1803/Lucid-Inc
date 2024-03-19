@@ -1,4 +1,4 @@
-import { faPen, faBook, faCog, faSignOutAlt, faGlobe } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faBook, faCog, faSignOutAlt, faGlobe, faHome } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
@@ -11,6 +11,12 @@ const AsideComponent = () => {
         <aside className="w-64 bg-base-100 p-6 border-r border-base-300 h-screen">
             <div className="mb-8">
                 <div className="text-2xl font-bold mb-6">M.U.S.</div>
+                <div className="flex items-center mb-4 cursor-pointer">
+                    <FontAwesomeIcon icon={faHome} className="text-base-content mr-2"/>
+                    <span>
+                        <Link href="/dashboard">Home</Link>
+                    </span>
+                </div>
                 <div className="flex items-center mb-4 cursor-pointer">
                     <FontAwesomeIcon icon={faPen} className="text-base-content mr-2"/>
                     <span>
@@ -26,7 +32,7 @@ const AsideComponent = () => {
                 <div className="flex items-center mb-4 cursor-pointer">
                     <FontAwesomeIcon icon={faGlobe} className="text-base-content mr-2"/>
                     <span>
-                        <Link href="/discover">About</Link>
+                        <Link href="/about">About Us</Link>
                     </span>
                 </div>
             </div>
