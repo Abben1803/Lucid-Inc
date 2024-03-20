@@ -47,9 +47,13 @@ export async function POST(req: NextApiRequest, res: NextApiResponse){
   const session = await getServerSession(req, res, authOptions);
   const userEmail = session?.user?.email;
 
+
   if (!userEmail) {
     return res.status(401).json({ error: 'User not authenticated' });
   }
+
+
+  // this will be create just boiler plate for now for finding book marks for a specific user
 
   try {
     const bookmark = await prisma.bookmark.findMany({
