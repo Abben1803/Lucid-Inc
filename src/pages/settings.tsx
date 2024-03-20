@@ -7,9 +7,6 @@ import { prisma } from '../lib/prisma';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faPen, faBook, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link';
 import "../app/globals.css";
 import AsideComponent from '@/components/AsideComponent';
 
@@ -32,14 +29,13 @@ export default function Settings({ user }: SettingsProps) {
     const [password, setPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const {
-      register,
-      handleSubmit,
-      formState: { errors },
+        handleSubmit,
+        formState: { errors },
     } = useForm<SettingsFormData>({
-      resolver: zodResolver(settingsSchema),
-      defaultValues: {
-        email: user.email,
-      },
+            resolver: zodResolver(settingsSchema),
+            defaultValues: {
+                email: user.email,
+            },
     });
 
     const onSubmit = async (data: SettingsFormData) => {

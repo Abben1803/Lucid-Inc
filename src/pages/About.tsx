@@ -18,7 +18,7 @@ export default function About() {
                     M.U.S. (My Unique Stories) is a captivating platform that empowers young minds to unleash their creativity and embark on enchanting storytelling adventures. With M.U.S., children can easily craft their own stories, complete with vivid illustrations, and share them with a community of fellow young authors.
                   </p>
                   <p className="text-lg mb-6">
-                    Our mission is to foster a love for storytelling, encourage imagination, and provide a safe and nurturing environment for children to express themselves through the power of words and visuals. We believe that every child has a unique voice and boundless potential waiting to be discovered.
+                    My mission is to foster a love for storytelling, encourage imagination, and provide a safe and nurturing environment for children to express themselves through the power of words and visuals. We believe that every child has a unique voice and boundless potential waiting to be discovered.
                   </p>
                   <div className="flex items-center">
                     <div className="avatar">
@@ -28,7 +28,7 @@ export default function About() {
                     </div>
                     <div className="ml-4">
                       <p className="text-lg font-semibold">Ashraf Ben</p>
-                      <p className="text-base">Founder & CEO</p>
+                      <p className="text-base">Software Dev</p>
                     </div>
                   </div>
                 </div>

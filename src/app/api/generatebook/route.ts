@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route'; 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { headers } from 'next/headers'
+import { prisma } from '../../../lib/prisma';
 
 
 import story from '@/pages/[story]';
 
-const prisma = new PrismaClient();
 
 export async function POST(req: Request, res: NextApiResponse) {
     const headersList = headers();

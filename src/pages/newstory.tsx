@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPen, faBook, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import styles from '../components/newstory.module.css'
@@ -9,9 +7,6 @@ import { getServerSession, Session } from 'next-auth';
 import React from 'react';
 import { useRouter } from 'next/router';
 import AsideComponent from '../components/AsideComponent';
-
-
-import Link from 'next/link';
 import { getSession } from 'next-auth/react';
 
 interface DashboardProps {
@@ -72,7 +67,7 @@ export default function newstory({session} : DashboardProps){
         const data = await response.json();
     
         if (data.bookId) {
-            router.push(`/${data.bookId}`);
+            router.push(`/book/${data.bookId}`);
         } else {
             console.error('Failed to generate book');
         }

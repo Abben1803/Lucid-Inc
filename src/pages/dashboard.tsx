@@ -9,9 +9,7 @@ import { useRouter } from 'next/router';
 import { prisma } from '../lib/prisma';
 import styles from '../components/newstory.module.css'
 import AsideComponent from '../components/AsideComponent';
-
-
-//import { Bookmark, Book } from '@prisma/client';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import { Book as PrismaBook, Bookmark } from '@prisma/client';
 
@@ -21,13 +19,22 @@ interface DashboardProps {
   additionalBooks: Book[];
 }
 
-type Book = PrismaBook & {
-    paragraph: {
-      image: {
-        image: string;
-      };
-    }[];
-  };
+interface Book {
+  id: number;
+  title: string;
+  paragraphs: Paragraph[];
+}
+
+interface Paragraph {
+  id: number;
+  paragraph: string;
+  image?: Image;
+}
+
+interface Image {
+  id: number;
+  image: string;
+}
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
@@ -43,17 +50,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       };
     }
     const userEmail = session.user?.email || null;
-
-    const bookmarkedBooks = await prisma.bookmark.findMany({
-            where: {
-                user: {
-                    email: userEmail? userEmail : undefined,
-                },
-            },
-            include: {
-                book: true,
-            },
-        });
 
     const additionalBooks = await prisma.book.findMany({
         where: {
@@ -84,14 +80,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
             email: userEmail,
           },
         },
-        bookmarkedBooks,
         additionalBooks,
       },
     };
 };
   
-
-
 export default function dashboard({session, bookmarkedBooks, additionalBooks}: DashboardProps){
     const router = useRouter();
 
@@ -103,8 +96,8 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
     const startIndex = (currentPage -1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentBooks = additionalBooks.slice(startIndex, endIndex);
-
-    console.log('Current page:', currentPage);
+    // console.log('Current image:', currentBooks[0]?.paragraphs?.[0]?.image);
+    // console.log('Current page:', currentPage);
     return (
         <div className="flex h-screen bg-base-200 text-base-content">
           <AsideComponent />
@@ -115,9 +108,9 @@ export default function dashboard({session, bookmarkedBooks, additionalBooks}: D
               <div className={styles.gridContainer}>
                 {currentBooks.map((book) => (
                   <Link key={book.id} href={`/${book.id}`} className={`${styles.bookCard} card`}>
-                    {book.paragraph?.[0]?.image?.image ? (
+                    {book.paragraphs?.[0]?.image?.image ? (
                       <img
-                        src={book.paragraph[0].image?.toString()}
+                        src={book.paragraphs[0].image?.image}
                         alt={book.title}
                         className={`${styles.bookImage} card-img-top`}
                       />

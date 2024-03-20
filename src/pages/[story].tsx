@@ -60,7 +60,7 @@ export default function story() {
                     if(response.ok){
                         console.log('Response:', response.status);
                         const data = await response.json();
-                        console.log('Received book data:', data);
+                        //console.log('Received book data:', data);
                         setBook(data);
                     }else {
                         return <div>Unauthorized</div>;
@@ -81,7 +81,7 @@ export default function story() {
       
         try {
           if (bookId && session) {
-            const response = await fetch(isBookmarked ? '/api/create/remove' : '/api/remove/create', {
+            const response = await fetch(isBookmarked ? '/api/create/' : '/api/remove/', {
               method: isBookmarked ? 'DELETE' : 'POST',
               headers: {
                 'Content-Type': 'application/json',
