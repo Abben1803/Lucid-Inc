@@ -54,7 +54,7 @@ export default function story() {
         const fetchBook = async () => {
             try{
                 if(bookId && session ) {
-                    const url = `/api/book/${bookId}`;
+                    const url = `/api/${bookId}`;
                     console.log('Fetching book from URL:', url);
                     const response = await fetch(url);
                     if(response.ok){
