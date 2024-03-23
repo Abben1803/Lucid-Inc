@@ -4,23 +4,9 @@ import "../app/globals.css";
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
+import { Book } from '../lib/interfaces';
 
-interface Book {
-    id: number;
-    title: string;
-    paragraphs: Paragraph[];
-}
 
-interface Paragraph {
-    id: number;
-    paragraph: string;
-    image?: Image;
-}
-
-interface Image {
-    id: number;
-    image: string;
-}
 
 export default function story() { 
     const [book, setBook] = useState<Book | null>(null);
@@ -63,8 +49,10 @@ export default function story() {
                         const data = await response.json();
                         //console.log('Received book data:', data);
                         setBook(data);
-                    }else {
-                        return <div>Unauthorized</div>;
+                    }else if (response.status === 403) {
+                        router.push('/forbidden');
+                    } else {
+                        router.push('/notfound');
                     }
                 }
             }catch(error){
@@ -76,6 +64,27 @@ export default function story() {
           fetchBook();
         }
     }, [bookId, session]);
+
+    const handleFlagClick = async (event: any) => {
+        event.preventDefault();
+      
+        try {
+          if (bookId && session) {
+            const response = await fetch('/api/flagged/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ bookId }),
+            });
+            if (response.ok) {
+              alert('Book flagged successfully');
+            }
+          }
+        } catch (error) {
+          console.error('Error flagging book:', error);
+        }
+    }
 
     const handleBookmarkClick = async (event: any) => {
         event.preventDefault();
@@ -118,7 +127,9 @@ export default function story() {
                             >
                             {isBookmarked ? 'Bookmarked' : 'Bookmark'}
                         </button>
-                        <button className="text-error text-sm">Flag Story</button>
+                        <button className="text-error text-sm" onClick = {handleFlagClick}>
+                            Flag Story
+                        </button>
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">

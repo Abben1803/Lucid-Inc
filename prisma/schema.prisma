@@ -33,7 +33,7 @@ model Book {
   title String
   userEmail String
   user User @relation(fields: [userEmail], references: [email])
-  adminReview AdminReview? // for flagging
+  flagged Flagged? // for flagging
   bookMark Bookmark? // for book marking 
   inputParams InputParams[] 
   paragraphs Paragraph[]
@@ -66,10 +66,9 @@ model Bookmark {
 }
 
 
-model AdminReview {
+model Flagged {
   id Int @id @default(autoincrement())
   bookId Int @unique
   book Book @relation(fields: [bookId], references: [id])
-  adminUserId Int 
-  reviewedAt DateTime @default(now())
+  flaggedAt DateTime @default(now())
 }

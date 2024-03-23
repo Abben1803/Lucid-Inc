@@ -2,32 +2,12 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
 import "../app/globals.css";
+import { Book, Bookmark } from '../lib/interfaces';
 
 
 type BookWithBookmark = Bookmark & { book: Book };
 
-interface Book {
-    id: number;
-    title: string;
-    paragraphs: Paragraph[];
-}
 
-interface Paragraph {
-    id: number;
-    paragraph: string;
-    image?: Image;
-}
-
-interface Image {
-    id: number;
-    image: string;
-}
-
-interface Bookmark {
-    id: number;
-    date: string;
-    book: Book;
-}
 
 const MyStoriesPage = () => {
   const { data: session } = useSession();

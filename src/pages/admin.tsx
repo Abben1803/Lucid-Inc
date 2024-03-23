@@ -5,11 +5,9 @@ import { Book } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import Link from 'next/link';
 
-
 interface AdminProps {
-  newBooks: Book[];
+  newBooks: (Book & { flagged: boolean })[];
 }
-
 
 export default function AdminPage({ newBooks }: AdminProps) {
   return (
@@ -18,6 +16,7 @@ export default function AdminPage({ newBooks }: AdminProps) {
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Title</th>
             <th>Author</th>
             <th>Created At</th>
@@ -25,12 +24,10 @@ export default function AdminPage({ newBooks }: AdminProps) {
         </thead>
         <tbody>
           {newBooks.map((book) => (
-            <tr key={book.id}>
+            <tr key={book.id} style={{ backgroundColor: book.flagged ? 'red' : 'transparent' }}>
               <td>{book.id}</td>
               <td>
-                <Link href={`/${book.id}`}>
-                  {book.title}
-                </Link>
+                <Link href={`/${book.id}`}>{book.title}</Link>
               </td>
               <td>{book.userEmail}</td>
               <td>{new Date(book.createdAt).toLocaleDateString()}</td>
@@ -42,36 +39,36 @@ export default function AdminPage({ newBooks }: AdminProps) {
   );
 }
 
-// need to fix this function i need to implement book marking
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-    if (!session || !(session.user as { isAdmin?: boolean }).isAdmin) {
-        return {
-        redirect: {
-            destination: '/notfound/',
-            permanent: false,
-        },
-        };
-    }
-
-    const newBooks = await prisma.book.findMany({
-        where: {
-          adminReview: {}
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-    });
-
-    const serializedNewBooks = newBooks.map((book) => ({
-      ...book,
-      createdAt: book.createdAt.toISOString(),
-    }));
-  
+  if (!session || !(session.user as { isAdmin?: boolean }).isAdmin) {
     return {
-      props: {
-        newBooks: serializedNewBooks,
+      redirect: {
+        destination: '/notfound/',
+        permanent: false,
       },
     };
+  }
+
+  const newBooks = await prisma.book.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      flagged: true,
+    },
+  });
+
+  const serializedNewBooks = newBooks.map((book) => ({
+    ...book,
+    createdAt: book.createdAt.toISOString(),
+    flagged: !!book.flagged,
+  }));
+
+  return {
+    props: {
+      newBooks: serializedNewBooks,
+    },
+  };
 }

@@ -9,32 +9,9 @@ import { useRouter } from 'next/router';
 import { prisma } from '../lib/prisma';
 import styles from '../components/newstory.module.css'
 import AsideComponent from '../components/AsideComponent';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { Book, Image, Paragraph, Flagged, DashboardProps } from '../lib/interfaces';
 
-import { Book as PrismaBook, Bookmark } from '@prisma/client';
 
-interface DashboardProps {
-  session: Session | null;
-  bookmarkedBooks: (Bookmark & { book: Book })[];
-  additionalBooks: Book[];
-}
-
-interface Book {
-  id: number;
-  title: string;
-  paragraphs: Paragraph[];
-}
-
-interface Paragraph {
-  id: number;
-  paragraph: string;
-  image?: Image;
-}
-
-interface Image {
-  id: number;
-  image: string;
-}
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
     const session = await getServerSession(context.req, context.res, authOptions);
@@ -54,6 +31,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     const additionalBooks = await prisma.book.findMany({
         where: {
             userEmail: userEmail? userEmail : undefined,
+            flagged: null,
         },
         select: {
             id: true,
@@ -85,7 +63,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
 };
   
-export default function dashboard({session, bookmarkedBooks, additionalBooks}: DashboardProps){
+export default function dashboard({additionalBooks}: DashboardProps){
     const router = useRouter();
 
     const [currentPage, setCurrentPage] = useState(1);
