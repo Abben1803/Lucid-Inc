@@ -32,6 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where: {
           id: parseInt(bookId as string, 10),
           userEmail: userEmail,
+          flagged: null,
         },
         include: {
           paragraphs: {

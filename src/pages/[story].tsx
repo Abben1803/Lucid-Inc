@@ -52,7 +52,7 @@ export default function story() {
                     }else if (response.status === 403) {
                         router.push('/forbidden');
                     } else {
-                        router.push('/notfound');
+                        router.push('/404');
                     }
                 }
             }catch(error){
@@ -79,12 +79,31 @@ export default function story() {
             });
             if (response.ok) {
               alert('Book flagged successfully');
+              router.push('/dashboard');
             }
           }
         } catch (error) {
           console.error('Error flagging book:', error);
         }
     }
+    const handleDeleteClick = async (event: any) => {
+        event.preventDefault();
+    
+        try {
+            if (bookId && session) {
+                const response = await fetch(`/api/admin/${bookId}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    router.push('/dashboard');
+                } else {
+                    throw new Error('Failed to delete book');
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting book:', error);
+        }
+    };
 
     const handleBookmarkClick = async (event: any) => {
         event.preventDefault();
@@ -127,9 +146,15 @@ export default function story() {
                             >
                             {isBookmarked ? 'Bookmarked' : 'Bookmark'}
                         </button>
+                        
                         <button className="text-error text-sm" onClick = {handleFlagClick}>
                             Flag Story
                         </button>
+                        {(session.user as { isAdmin?: boolean })?.isAdmin && (
+                            <button className="text-error text-sm ml-2" onClick={handleDeleteClick}>
+                                Delete Story
+                            </button>
+                        )}
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">
@@ -167,6 +192,7 @@ export default function story() {
                             Next
                         </button>
                     </div>
+                    
                 </div>
             </main>
         </div>

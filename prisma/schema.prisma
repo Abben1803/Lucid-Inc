@@ -21,7 +21,7 @@ model InputParams {
   id Int @id @default(autoincrement())
   age Int
   bookId Int
-  book Book @relation(fields: [bookId], references: [id])
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
   prompt String
   genre String
   artstyle String
@@ -32,7 +32,7 @@ model Book {
   id Int @id @default(autoincrement())
   title String
   userEmail String
-  user User @relation(fields: [userEmail], references: [email])
+  user User @relation(fields: [userEmail], references: [email],  onDelete: Cascade)
   flagged Flagged? // for flagging
   bookMark Bookmark? // for book marking 
   inputParams InputParams[] 
@@ -43,7 +43,7 @@ model Book {
 model Paragraph {
   id Int @id @default(autoincrement())
   bookId Int
-  book Book @relation(fields: [bookId], references: [id])
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
   paragraph String
   image Image?
   paragraphNumber Int
@@ -52,16 +52,16 @@ model Paragraph {
 model Image{
   id Int @id @default(autoincrement())
   paragraphID Int @unique
-  paragraph Paragraph @relation(fields: [paragraphID], references: [id])
+  paragraph Paragraph @relation(fields: [paragraphID], references: [id],  onDelete: Cascade)
   image String
 }
 
 model Bookmark {
   id Int @id @default(autoincrement())
   bookId Int @unique
-  book Book @relation(fields: [bookId], references: [id])
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
   userId Int
-  user User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id],  onDelete: Cascade)
   date DateTime @default(now())
 }
 
@@ -69,6 +69,6 @@ model Bookmark {
 model Flagged {
   id Int @id @default(autoincrement())
   bookId Int @unique
-  book Book @relation(fields: [bookId], references: [id])
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
   flaggedAt DateTime @default(now())
 }

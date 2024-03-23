@@ -18,6 +18,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(403).json({ message: 'Forbidden' });
   }
 
+  if (req.method === 'DELETE') {
+    try {
+      // Delete associated InputParams records
+      await prisma.inputParams.deleteMany({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+        },
+      });
+
+      // Delete associated Paragraph records
+      await prisma.paragraph.deleteMany({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+        },
+      });
+
+      // Delete associated Bookmark record
+      await prisma.bookmark.deleteMany({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+        },
+      });
+
+      // Delete associated Flagged record
+      await prisma.flagged.deleteMany({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+        },
+      });
+
+      // Delete the book
+      const deletedBook = await prisma.book.delete({
+        where: {
+          id: parseInt(bookId as string, 10),
+        },
+      });
+
+      console.log('Deleted book:', deletedBook);
+      return res.status(200).json({ message: 'Book deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting book:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
   if (req.method === 'GET') {
     try {
       const book = await prisma.book.findFirst({
