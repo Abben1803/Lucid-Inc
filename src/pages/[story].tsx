@@ -54,7 +54,8 @@ export default function story() {
         const fetchBook = async () => {
             try{
                 if(bookId && session ) {
-                    const url = `/api/${bookId}`;
+                    const isAdmin = (session.user as { isAdmin?: boolean })?.isAdmin;
+                    const url = isAdmin ? `/api/admin/${bookId}` : `/api/${bookId}`;
                     console.log('Fetching book from URL:', url);
                     const response = await fetch(url);
                     if(response.ok){
