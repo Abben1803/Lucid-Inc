@@ -45,9 +45,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const bookmark = await prisma.bookmark.deleteMany({
         where: {
           bookId: parseInt(bookId as string, 10),
-          userEmail: userEmail,
         },
       });
+
     } catch (error) {
       console.error('Error deleting bookmark:', error);
       return res.status(500).json({ message: 'Internal server error' });
@@ -55,8 +55,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
 
+
   if (req.method === 'GET') {
     try {
+
       const book = await prisma.book.findFirst({
         where: {
           id: parseInt(bookId as string, 10),
@@ -73,28 +75,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      console.log('Retrieved book from database:', book);
 
 
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
       }
 
-      if(typeof bookId === 'string') {
-        const bookmark = await prisma.bookmark.findFirst({
-          where: {
-            bookId: parseInt(bookId, 10),
-            userEmail: userEmail,
-          },
-        });
-
-        console.log ('Retrieved bookmark:', bookmark);
-        if (bookmark) {
-          return res.status(200).json({ bookmarked: true });
-        } else {
-          return res.status(200).json({ bookmarked: false });
-        }
-      }
 
       const bookData = {
         id: book.id,

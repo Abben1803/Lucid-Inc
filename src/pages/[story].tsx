@@ -1,10 +1,9 @@
 import React, { useEffect, useState} from 'react';
-import Image from 'next/image';
-import "../app/globals.css";
+
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
-import { Book } from '../lib/interfaces';
+import { Book, Paragraph, Image } from '../lib/interfaces';
 
 
 
@@ -65,19 +64,7 @@ export default function story() {
         }
     }, [bookId, session]);
 
-    useEffect(() => {
-        const checkBookmarkStatus = async () => {
-          if (bookId && session) {
-            const response = await fetch(`/api/${bookId}`);
-            if (response.ok) {
-              const { bookmarked } = await response.json();
-              setIsBookmarked(bookmarked);
-            }
-          }
-        };
-      
-        checkBookmarkStatus();
-      }, [bookId, session]);
+    
 
     const handleFlagClick = async (event: any) => {
         event.preventDefault();
@@ -130,7 +117,7 @@ export default function story() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({ bookId }),
-            }); 
+            });
             if (response.ok) {
               setIsBookmarked(!isBookmarked);
             }
@@ -144,8 +131,8 @@ export default function story() {
     if (!book) return <div>Loading...</div>;
         
 
-    const totalPages = book.paragraphs.length;
-    console.log("Current image URL:", book.paragraphs[currentParagraphIndex-1].image || 'No Image');
+    const totalPages = book.paragraphs?.length;
+    console.log("Current image URL:", book.paragraphs?.[currentParagraphIndex-1].image || 'No Image');
 
     return (
         <div className="flex h-screen bg-base-200 text-base-content">
@@ -175,18 +162,18 @@ export default function story() {
                             <div className="text-base-content font-bold text-lg">{book.title}</div>
                         </div>
                         <div className="flex-1 w-full max-w-2xl overflow-y-auto">
-                            {book.paragraphs[currentParagraphIndex - 1] && (
+                            {book.paragraphs?.[currentParagraphIndex - 1] && (
                                 <div className="flex justify-center items-center pt-12 mb-7">
                                     <img
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs[currentParagraphIndex - 1].image?.toString()}
+                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString()}
                                     />
                                 </div>
                             )}
                             <p className="text-base-content text-sm border border-base-300 p-4">
-                                {book.paragraphs[currentParagraphIndex - 1].paragraph}
+                                {book.paragraphs?.[currentParagraphIndex - 1].paragraph}
                             </p>
                         </div>
                     </div>
