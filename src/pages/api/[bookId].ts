@@ -18,11 +18,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // need to check if user is admin as well so he is able to see the content not sure how to implement yet.
 
   const userEmail = session.user?.email;
+  const userId = session.user?.email;
 
 
 
   if(!userEmail) {
     return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  if (req.method === 'POST') {
+    try{
+      const bookmark = await prisma.bookmark.create({
+        data: {
+          bookId: parseInt(bookId as string, 10),
+          userEmail: userEmail,
+        },
+      });
+    } catch(error) {
+      console.error('Error creating bookmark:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  if(req.method === 'DELETE') {
+    try{
+      const bookmark = await prisma.bookmark.deleteMany({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+          userEmail: userEmail,
+        },
+      });
+    } catch (error) {
+      console.error('Error deleting bookmark:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
   }
 
 
@@ -49,6 +78,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
+      }
+
+      if(typeof bookId === 'string') {
+        const bookmark = await prisma.bookmark.findFirst({
+          where: {
+            bookId: parseInt(bookId, 10),
+            userEmail: userEmail,
+          },
+        });
+
+        console.log ('Retrieved bookmark:', bookmark);
+        if (bookmark) {
+          return res.status(200).json({ bookmarked: true });
+        } else {
+          return res.status(200).json({ bookmarked: false });
+        }
       }
 
       const bookData = {

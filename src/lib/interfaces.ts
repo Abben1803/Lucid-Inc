@@ -4,8 +4,9 @@ export interface Book {
     title: string;
     paragraphs: Paragraph[];
     flagged: Flagged;
+    bookmarked: boolean;
 }
-  
+
 export interface Paragraph {
     id: number;
     paragraph: string;
@@ -26,6 +27,11 @@ export interface Flagged {
 export interface DashboardProps {
     additionalBooks: Book[];
 }
+
+export interface BookmarkProps {
+    bookmarks: Book[];
+}
+  
   
 
 export interface Bookmark {

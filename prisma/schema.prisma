@@ -60,8 +60,8 @@ model Bookmark {
   id Int @id @default(autoincrement())
   bookId Int @unique
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
-  userId Int
-  user User @relation(fields: [userId], references: [id],  onDelete: Cascade)
+  userEmail String
+  user User @relation(fields: [userEmail], references: [email],  onDelete: Cascade)
   date DateTime @default(now())
 }
 

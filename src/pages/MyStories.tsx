@@ -1,77 +1,120 @@
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
-import AsideComponent from '../components/AsideComponent';
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
-import { Book, Bookmark } from '../lib/interfaces';
+import Link from 'next/link';
+import { GetServerSidePropsContext } from 'next';
+import { getServerSession, Session } from 'next-auth';
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { prisma } from '../lib/prisma';
+import styles from '../components/newstory.module.css'
+import AsideComponent from '../components/AsideComponent';
+import { BookmarkProps } from '../lib/interfaces';
 
 
-type BookWithBookmark = Bookmark & { book: Book };
 
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-
-const MyStoriesPage = () => {
-  const { data: session } = useSession();
-  const [bookmarkedBooks, setBookmarkedBooks] = useState<(Bookmark & { book: Book })[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBookmarkedBooks = async () => {
-      if (session) {
-        try {
-          const response = await fetch('/api/bookmarks', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            setBookmarkedBooks(data);
-          } else {
-            console.error('Failed to fetch bookmarked books');
-          }
-        } catch (error) {
-          console.error('Error fetching bookmarked books:', error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
+  if (!session || !session.user?.email) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
     };
-
-    fetchBookmarkedBooks();
-  }, [session]);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
   }
 
-  return (
-    <div className="flex h-screen bg-base-200 text-base-content">
-      <AsideComponent />
-      <main className="flex-1 overflow-y-auto p-8">
-        <h1 className="text-4xl font-bold mb-8">My Stories</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {bookmarkedBooks.map((bookmark) => (
-            <div key={bookmark.id} className="card bg-base-100 shadow-xl">
-              <figure>
-                <img src={bookmark.book.paragraphs[0].image?.image} alt={bookmark.book.title} />
-              </figure>
-              <div className="card-body">
-                <h2 className="card-title">{bookmark.book.title}</h2>
-                <p>Bookmarked on: {new Date(bookmark.date).toLocaleDateString()}</p>
-                <div className="card-actions justify-end">
-                  <a href={`/book/${bookmark.book.id}`} className="btn btn-primary">
-                    Read Now
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
-  );
+  const userEmail = session.user.email;
+
+  // Fetch books that are bookmarked by the user
+  const bookmarks = await prisma.book.findMany({
+    where: {
+      userEmail: userEmail,
+      bookMark: {
+        isNot: null,
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+      paragraphs: {
+        select: {
+          image: {
+            select: {
+              image: true,
+            },
+          },
+        },
+      },
+      bookMark: {
+        select: {
+          id: true,
+        },
+      },
+    },
+  });
+
+  return {
+    props: {
+      session: {
+        ...session,
+        user: {
+          email: userEmail,
+        },
+      },
+      bookmarks,
+    },
+  };
 };
 
-export default MyStoriesPage;
+export default function dashboard({bookmarks}: BookmarkProps){
+    const router = useRouter();
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
+    const pages = Math.ceil(bookmarks.length / itemsPerPage);
+ 
+    const startIndex = (currentPage -1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentBooks = bookmarks.slice(startIndex, endIndex);
+    return (
+        <div className="flex h-screen bg-base-200 text-base-content">
+          <AsideComponent />
+          <main className="flex-1 p-6">
+            <h1 className="text-2xl font-semibold mb-4">Hello, young storyteller!</h1>
+            <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
+              <h2 className="text-xl font-semibold mb-4">Your Recently Created Books</h2>
+              <div className={styles.gridContainer}>
+                {currentBooks.map((book) => (
+                  <Link key={book.id} href={`/${book.id}`} className={`${styles.bookCard} card`}>
+                    {book.paragraphs?.[0]?.image?.image ? (
+                      <img
+                        src={book.paragraphs[0].image?.image}
+                        alt={book.title}
+                        className={`${styles.bookImage} card-img-top`}
+                      />
+                    ) : (
+                      <div className={`${styles.bookImage} h-32 card-img-top`}></div>
+                    )}
+                    <div className={`${styles.title} card-body text-center`}>{book.title}</div>
+                  </Link>
+                ))}
+              </div>
+              <div className="flex justify-center mt-4">
+                {Array.from({ length: pages }, (_, i) => (
+                  <button
+                    key={i + 1}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+                  >
+                    {i + 1}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </main>
+        </div>
+    );
+}

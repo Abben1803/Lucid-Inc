@@ -5,6 +5,8 @@ import { Book } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import Link from 'next/link';
 
+
+
 interface AdminProps {
   newBooks: (Book & { flagged: boolean })[];
 }

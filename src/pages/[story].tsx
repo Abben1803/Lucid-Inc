@@ -52,7 +52,7 @@ export default function story() {
                     }else if (response.status === 403) {
                         router.push('/forbidden');
                     } else {
-                        router.push('/404');
+                        router.push('/notfound');
                     }
                 }
             }catch(error){
@@ -64,6 +64,20 @@ export default function story() {
           fetchBook();
         }
     }, [bookId, session]);
+
+    useEffect(() => {
+        const checkBookmarkStatus = async () => {
+          if (bookId && session) {
+            const response = await fetch(`/api/${bookId}`);
+            if (response.ok) {
+              const { bookmarked } = await response.json();
+              setIsBookmarked(bookmarked);
+            }
+          }
+        };
+      
+        checkBookmarkStatus();
+      }, [bookId, session]);
 
     const handleFlagClick = async (event: any) => {
         event.preventDefault();
@@ -110,13 +124,13 @@ export default function story() {
       
         try {
           if (bookId && session) {
-            const response = await fetch(isBookmarked ? '/api/create/' : '/api/remove/', {
+            const response = await fetch(`/api/${bookId}`, {
               method: isBookmarked ? 'DELETE' : 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({ bookId }),
-            });
+            }); 
             if (response.ok) {
               setIsBookmarked(!isBookmarked);
             }
