@@ -13,7 +13,7 @@ model User {
   password String
   isAdmin Boolean @default(false)
   books Book[]
-  bookMark Bookmark[]
+  bookmarks Bookmark[]
   registrationDate DateTime @default(now())
 }
 
@@ -34,7 +34,7 @@ model Book {
   userEmail String
   user User @relation(fields: [userEmail], references: [email],  onDelete: Cascade)
   flagged Flagged? // for flagging
-  bookMark Bookmark? // for book marking 
+  bookmark Bookmark[] // for book marking 
   inputParams InputParams[] 
   paragraphs Paragraph[]
   createdAt DateTime @default(now())
@@ -58,13 +58,15 @@ model Image{
 
 model Bookmark {
   id Int @id @default(autoincrement())
-  bookId Int @unique
-  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId Int
   userEmail String
-  user User @relation(fields: [userEmail], references: [email],  onDelete: Cascade)
   date DateTime @default(now())
-}
 
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userEmail], references: [email], onDelete: Cascade)
+
+  @@unique([bookId, userEmail])
+}
 
 model Flagged {
   id Int @id @default(autoincrement())

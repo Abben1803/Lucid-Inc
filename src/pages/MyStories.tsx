@@ -28,32 +28,30 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const userEmail = session.user.email;
 
   // Fetch books that are bookmarked by the user
-  const bookmarks = await prisma.book.findMany({
+  const bookmarks = await prisma.bookmark.findMany({
     where: {
       userEmail: userEmail,
-      bookMark: {
-        isNot: null,
-      },
     },
-    select: {
-      id: true,
-      title: true,
-      paragraphs: {
+    include: {
+      book: {
         select: {
-          image: {
+          id: true,
+          title: true,
+          paragraphs: {
             select: {
-              image: true,
+              image: {
+                select: {
+                  image: true,
+                },
+              },
             },
           },
         },
       },
-      bookMark: {
-        select: {
-          id: true,
-        },
-      },
     },
   });
+
+  const transformedBookmarks = bookmarks.map(({ book }) => book);
 
   return {
     props: {
@@ -63,7 +61,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
           email: userEmail,
         },
       },
-      bookmarks,
+      bookmarks: transformedBookmarks,
     },
   };
 };
