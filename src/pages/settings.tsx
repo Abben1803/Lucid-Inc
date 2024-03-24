@@ -19,6 +19,11 @@ interface SettingsProps {
 const settingsSchema = z.object({
     email: z.string().email('Invalid email').min(1),
     password: z.string().min(8, 'Password must be at least 8 characters').optional(),
+    confirmPassword: z.string().min(1, 'Password confirmation is required'),
+    }) 
+    .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Password do not match',
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
