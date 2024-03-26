@@ -142,7 +142,7 @@ export default function newstory({session} : DashboardProps){
                     <section className="mb-4">
                         <h2 className="font-semibold mb-2">Pick an art-style</h2>
                         <div className="grid grid-cols-4 gap-4">
-                            {['Classic', 'Comic Book', 'Manga', 'Cartoon'].map((artStyle) => (
+                            {['Minecraft', 'Comic Book', 'Pixel Art', 'Cartoon'].map((artStyle) => (
                                 <button
                                     key={artStyle}
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedArtStyle === artStyle ? styles.selected : ''}`}

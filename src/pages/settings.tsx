@@ -32,6 +32,7 @@ type SettingsFormData = z.infer<typeof settingsSchema>;
 export default function Settings({ user }: SettingsProps) {
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const {
         handleSubmit,
@@ -90,6 +91,14 @@ export default function Settings({ user }: SettingsProps) {
                                 className="mt-1 p-3 border border-gray-300 rounded w-full"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <label htmlFor="confirm password" className = "blocktext-sm font-medium text-gray-700">Confirm Password:</label>
+                            <input 
+                                type="confirm password"
+                                id = "confirm password"
+                                className = "mt-1 p-3 border border-gray-300 rounded w-full"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                             />
                         </div>
                         <button type="submit" className="py-3 px-6 bg-blue-500 text-white font-medium rounded hover:bg-blue-700 w-full">Save Changes</button>
