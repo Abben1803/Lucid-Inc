@@ -9,7 +9,6 @@ import { Book, Paragraph, Image } from '../lib/interfaces';
 
 export default function story() { 
     const [book, setBook] = useState<Book | null>(null);
-    const [title, setTitle] = useState("");
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
     const { story: bookId } = router.query;
@@ -127,12 +126,25 @@ export default function story() {
         }
     };
 
-    if(!session) return <div>Unauthorized</div>;
+    if (!session) return <div>Unauthorized</div>;
     if (!book) return <div>Loading...</div>;
-        
 
-    const totalPages = book.paragraphs?.length;
-    console.log("Current image URL:", book.paragraphs?.[currentParagraphIndex-1].image || 'No Image');
+    console.log(book.paragraphs.length);
+    let finalIndex = book.paragraphs.length;
+    let totalPages = book?.paragraphs?.length;  
+    let lastParagraph = book.paragraphs[finalIndex-1].paragraph.length;
+
+    if(lastParagraph == 0){
+        book.paragraphs.pop();
+        totalPages--;
+    }
+
+    console.log(book.paragraphs.length);
+
+
+    console.log("Current image URL:", book.paragraphs?.[currentParagraphIndex - 1]?.image || 'No Image');
+
+    //console.log(book.paragraphs[currentParagraphIndex - 1].paragraph.length)
 
     return (
         <div className="flex h-screen bg-base-200 text-base-content">
@@ -168,7 +180,7 @@ export default function story() {
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString()}
+                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString() || book.paragraphs?.[0].image?.toString()}
                                     />
                                 </div>
                             )}

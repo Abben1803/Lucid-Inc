@@ -32,7 +32,7 @@ export async function POST(req: Request, res: NextApiResponse) {
     const imagePaths = await generateAndSaveImagesDallE(imagePrompts);
 
     // Generate title
-    const title = await getTitle(storyParagraphs.join('|'));
+    const title = await getTitle(storyParagraphs.join('|'), language);
 
     const book = await prisma.book.create({
         data: {
@@ -192,7 +192,7 @@ async function saveImage(base64Data: string, filename: string): Promise<string> 
     return `/images/${filename}`;
 }
 
-async function getTitle(story: string){
+async function getTitle(story: string, language: string){
     const OpenAI = require('openai')
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
     const response = await openai.chat.completions.create({
@@ -200,11 +200,11 @@ async function getTitle(story: string){
         messages: [
             {
                 role: 'system',
-                content: 'Your job is to generate a title for the following story. You must make sure that the title is short and descriptive. The title should be a single sentence.',
+                content: 'Your job is to generate a title for the following story. You must make sure the title is in the provided language.The title should be a single sentence.',
             },
             {
                 role: 'user',
-                content: `story: ${story}`,
+                content: `story: ${story}\nlanguage: ${language}`,
             },
         ],
     });
