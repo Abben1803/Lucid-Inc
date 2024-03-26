@@ -2,15 +2,26 @@ import { faPen, faBook, faCog, faSignOutAlt, faGlobe, faHome } from '@fortawesom
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { useSession } from "next-auth/react"
+
+
+
+
+
 
 const AsideComponent = () => {
+    const { data: session} = useSession();
+
+    const email = session?.user?.email;
+    const firstPart = email?.match?.(/[^@]+/)?.[0];
+
     const handleLogout = async () => {
         await signOut({ callbackUrl: '/login' });
     };
     return (
         <aside className="w-64 bg-base-100 p-6 border-r border-base-300 h-screen">
             <div className="mb-8">
-                <div className="text-2xl font-bold mb-6">M.U.S.</div>
+                <div className="text-2xl font-bold mb-6 overflow-wrap break-words">Hello {firstPart}</div>
                 <div className="flex items-center mb-4 cursor-pointer">
                     <FontAwesomeIcon icon={faHome} className="text-base-content mr-2"/>
                     <span>

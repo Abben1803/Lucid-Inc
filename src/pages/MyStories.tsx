@@ -81,7 +81,6 @@ export default function dashboard({bookmarks}: BookmarkProps){
         <div className="flex h-screen bg-base-200 text-base-content">
           <AsideComponent />
           <main className="flex-1 p-6">
-            <h1 className="text-2xl font-semibold mb-4">Hello, young storyteller!</h1>
             <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
               <h2 className="text-xl font-semibold mb-4">Your Favorite Books</h2>
               <div className={styles.gridContainer}>
