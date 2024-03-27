@@ -48,9 +48,9 @@ export default function story() {
                         //console.log('Received book data:', data);
                         setBook(data);
                     }else if (response.status === 403) {
-                        router.push('/forbidden');
+                        router.push('/Unauthorized/forbidden');
                     } else {
-                        router.push('/notfound');
+                        router.push('/404/notfound');
                     }
                 }
             }catch(error){
