@@ -20,7 +20,7 @@ model User {
 model InputParams {
   id Int @id @default(autoincrement())
   age Int
-  bookId Int
+  bookId Int @unique
   book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
   prompt String
   genre String
@@ -35,7 +35,7 @@ model Book {
   user User @relation(fields: [userEmail], references: [email],  onDelete: Cascade)
   flagged Flagged? // for flagging
   bookmark Bookmark[] // for book marking 
-  inputParams InputParams[] 
+  inputParams InputParams?
   paragraphs Paragraph[]
   createdAt DateTime @default(now())
 }
