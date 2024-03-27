@@ -26,9 +26,19 @@ export default function About() {
                         <img src="/path/to/founder-avatar.jpg" alt="Founder" />
                       </div>
                     </div>
-                    <div className="ml-4">
+                    <div className="ml-4 flex-wrap">
                       <p className="text-lg font-semibold">Ashraf Ben</p>
                       <p className="text-base">Software Dev</p>
+                      <p className="text-lg font-semibold">Abdul Rahman</p>
+                      <p className="text-base">Place Holder</p>
+                      <p className="text-lg font-semibold">Bhavin Desai</p>
+                      <p className="text-base">Place Holder</p>
+                      <p className="text-lg font-semibold">Samra</p>
+                      <p className="text-base">Place Holder</p>
+                      <p className="text-lg font-semibold">Kevin Richards</p>
+                      <p className="text-base">Place Holder</p>
+
+
                     </div>
                   </div>
                 </div>
