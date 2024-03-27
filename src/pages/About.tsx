@@ -2,14 +2,22 @@
 import AsideComponent from '../components/AsideComponent';
 import "../app/globals.css";
 import '@fortawesome/fontawesome-svg-core/styles.css';
+import { useState } from 'react';
 
 
 export default function About() {
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
+    const toggleAside = () => {
+      setIsAsideOpen(!isAsideOpen);
+    };
 
     return (
         <div className="flex h-screen bg-base-200 text-base-content">
-          <AsideComponent />
-          <main className="flex-1 overflow-y-auto">
+          <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+          <main 
+            className={`flex-1 overflow-y-auto transition-all duration-300 ${
+              isAsideOpen ? 'ml-64' : 'ml-0'
+            }`}>
             <div className="p-8">
               <h1 className="text-4xl font-bold mb-4">About M.U.S.</h1>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -37,8 +45,6 @@ export default function About() {
                       <p className="text-base">Place Holder</p>
                       <p className="text-lg font-semibold">Kevin Richards</p>
                       <p className="text-base">Place Holder</p>
-
-
                     </div>
                   </div>
                 </div>

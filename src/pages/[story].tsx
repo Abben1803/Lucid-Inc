@@ -14,6 +14,10 @@ export default function story() {
     const { story: bookId } = router.query;
     const { data: session } = useSession();
     const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
+    const toggleAside = () => {
+      setIsAsideOpen(!isAsideOpen);
+    };
     
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -148,8 +152,10 @@ export default function story() {
 
     return (
         <div className="flex h-screen bg-base-200 text-base-content">
-            <AsideComponent />
-            <main className="flex-1 overflow-y-auto">
+            <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+
+            <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
+                isAsideOpen ? 'ml-64' : 'ml-0'}`}>
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
                         <button

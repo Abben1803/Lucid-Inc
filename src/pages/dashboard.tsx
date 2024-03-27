@@ -64,53 +64,62 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 };
   
 export default function dashboard({additionalBooks}: DashboardProps){
-    const router = useRouter();
+  const router = useRouter();
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isAsideOpen, setIsAsideOpen] = useState(true);
+  const toggleAside = () => {
+    setIsAsideOpen(!isAsideOpen);
+  };
 
-    const pages = Math.ceil(additionalBooks.length / itemsPerPage);
- 
-    const startIndex = (currentPage -1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentBooks = additionalBooks.slice(startIndex, endIndex);
-    // console.log('Current image:', currentBooks[0]?.paragraphs?.[0]?.image);
-    // console.log('Current page:', currentPage);
-    return (
-        <div className="flex h-screen bg-base-200 text-base-content">
-          <AsideComponent />
-          <main className="flex-1 p-6">
-            <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
-              <h2 className="text-xl font-semibold mb-4">Your Recently Created Books</h2>
-              <div className={styles.gridContainer}>
-                {currentBooks.map((book) => (
-                  <Link key={book.id} href={`/${book.id}`} className={`${styles.bookCard} card`}>
-                    {book.paragraphs?.[0]?.image?.image ? (
-                      <img
-                        src={book.paragraphs[0].image?.image}
-                        alt={book.title}
-                        className={`${styles.bookImage} card-img-top`}
-                      />
-                    ) : (
-                      <div className={`${styles.bookImage} h-32 card-img-top`}></div>
-                    )}
-                    <div className={`${styles.title} card-body text-center`}>{book.title}</div>
-                  </Link>
-                ))}
-              </div>
-              <div className="flex justify-center mt-4">
-                {Array.from({ length: pages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={`btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </main>
+  const itemsPerPage = 8;
+
+  const pages = Math.ceil(additionalBooks.length / itemsPerPage);
+
+  const startIndex = (currentPage -1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentBooks = additionalBooks.slice(startIndex, endIndex);
+
+
+  return (
+    <div className="flex h-screen bg-base-200 text-base-content">
+      <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+      <main
+        className={`flex-1 p-6 transition-all duration-300 ${
+          isAsideOpen ? 'ml-64' : 'ml-0'
+        }`}
+      >
+        <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
+          <h2 className="text-xl font-semibold mb-4">Your Recently Created Books</h2>
+          <div className={styles.gridContainer}>
+            {currentBooks.map((book) => (
+              <Link key={book.id} href={`/${book.id}`} className={`${styles.bookCard} card`}>
+                {book.paragraphs?.[0]?.image?.image ? (
+                  <img
+                    src={book.paragraphs[0].image?.image}
+                    alt={book.title}
+                    className={`${styles.bookImage} card-img-top`}
+                  />
+                ) : (
+                  <div className={`${styles.bookImage} h-32 card-img-top`}></div>
+                )}
+                <div className={`${styles.title} card-body text-center`}>{book.title}</div>
+              </Link>
+            ))}
+          </div>
+          <div className="flex justify-center mt-4">
+            {Array.from({ length: pages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`btn btn-sm ${currentPage === i + 1 ? 'btn-active' : ''}`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         </div>
-    );
+      </main>
+    </div>
+  );
 }

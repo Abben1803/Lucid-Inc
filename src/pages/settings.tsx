@@ -43,9 +43,13 @@ export default function Settings({ user }: SettingsProps) {
                 email: user.email,
             },
     });
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
+    const toggleAside = () => {
+        setIsAsideOpen(!isAsideOpen);
+    };
 
     const onSubmit = async (data: SettingsFormData) => {
-        setSubmitting(true);
+        setSubmitting(true);    
         try {
             const response = await fetch('/api/settings', {
             method: 'PUT',
@@ -68,8 +72,11 @@ export default function Settings({ user }: SettingsProps) {
 
     return (
         <div className="flex h-screen bg-gray-100 text-black">
-            <AsideComponent/>
-            <main className="flex flex-1 items-center justify-center">
+            <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+
+            <main className={`flex flex-1 items-center justify-center transition-all duration-300 ${
+                isAsideOpen ? 'ml-64' : 'ml-0'
+            }`}>
                 <div className="w-full max-w-lg">
                     <h1 className="text-xl font-bold mb-8">Settings</h1>
                     <form onSubmit={handleSubmit(onSubmit)} className="bg-white p-8 border border-gray-300 rounded-lg">

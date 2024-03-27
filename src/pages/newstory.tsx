@@ -8,6 +8,9 @@ import React from 'react';
 import { useRouter } from 'next/router';
 import AsideComponent from '../components/AsideComponent';
 import { getSession } from 'next-auth/react';
+import LoadingOverlay from '../components/LoadingOverlay';
+import router from 'next/router';
+
 
 interface DashboardProps {
     session: Session | null;
@@ -21,26 +24,49 @@ export default function newstory({session} : DashboardProps){
     const [selectedGenre, setSelectedGenre] = React.useState("");
     const [selectedArtStyle, setSelectedArtStyle] = React.useState("");
     const [storyPrompt, setStoryPrompt] = React.useState("")
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [isFormValid, setIsFormValid] = React.useState(false);
 
-    const router = useRouter();
+    const validateForm = () => {
+        return (
+            selectedAge !== "" &&
+            selectedLanguage !== "" &&
+            selectedGenre !== "" &&
+            selectedArtStyle !== "" 
+            
+        );
+    };
+
+    const [isAsideOpen, setIsAsideOpen] = React.useState(true);
+    const toggleAside = () => {
+      setIsAsideOpen(!isAsideOpen);
+    };
+  
+
     const handleAgeSelection = (age: string) => {
         setSelectedAge(age);
+        setIsFormValid(validateForm());
     };
-
+    
     const handleLanguageSelection = (language: string) => {
         setSelectedLanguage(language);
+        setIsFormValid(validateForm());
     };
-
+    
     const handleGenreSelection = (genre: string) => {
         setSelectedGenre(genre);
+        setIsFormValid(validateForm());
     };
-
+    
     const handleArtStyleSelection = (artStyle: string) => {
         setSelectedArtStyle(artStyle);
-    }
+        setIsFormValid(validateForm());
+    };
+
 
 
     const handleSubmit = async () => {
+        setIsLoading(true);
         const session = await getSession(); // Get the client-side session
         const userId = session?.user?.email; // Extract the userId from the session
     
@@ -71,13 +97,18 @@ export default function newstory({session} : DashboardProps){
         } else {
             console.error('Failed to generate book');
         }
+        setIsLoading(false);
     }
 
     return(
+        <>
         <div className="flex h-screen bg-gray-100 text-black">
-            <AsideComponent />
+            <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+
             <div className="flex-1 bg-gray-100 p-8">
-                <main>
+                <main className= {`flex-1 bg-gray-100 p-8 transition-all duration-300 ${
+                    isAsideOpen ? 'ml-64' : 'ml-0'
+                }`}>
                     <section className="mb-4">
                         <h2 className="font-semibold mb-2">Create Your Own Story</h2>
                         <div className="grid grid-cols-3 gap-4">
@@ -155,11 +186,19 @@ export default function newstory({session} : DashboardProps){
                         </div>
                     </section>
                     <div className="text-center">
-                        <button className="border-2 border-black px-8 py-2" onClick = {handleSubmit}>MAKE MY STORY</button>
+                        <button
+                            className={styles.submitButton}
+                            onClick={handleSubmit}
+                            disabled={!isFormValid || isLoading}
+                        >
+                            MAKE MY STORY
+                        </button>
+                        <LoadingOverlay isLoading={isLoading} />
                     </div>
                 </main>
             </div>
         </div>
+        </>
     );
 }
 

@@ -68,6 +68,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function dashboard({bookmarks}: BookmarkProps){
     const router = useRouter();
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8;
@@ -77,10 +78,16 @@ export default function dashboard({bookmarks}: BookmarkProps){
     const startIndex = (currentPage -1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentBooks = bookmarks.slice(startIndex, endIndex);
+    const toggleAside = () => {
+      setIsAsideOpen(!isAsideOpen);
+    };
+
     return (
-        <div className="flex h-screen bg-base-200 text-base-content">
-          <AsideComponent />
-          <main className="flex-1 p-6">
+      <div className="flex h-screen bg-base-200 text-base-content">
+        <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+        <main
+          className={`flex-1 p-6 transition-all duration-300 ${
+            isAsideOpen ? 'ml-64' : 'ml-0'}`}>
             <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
               <h2 className="text-xl font-semibold mb-4">Your Favorite Books</h2>
               <div className={styles.gridContainer}>
@@ -111,7 +118,7 @@ export default function dashboard({bookmarks}: BookmarkProps){
                 ))}
               </div>
             </div>
-          </main>
-        </div>
+        </main>
+      </div>
     );
 }
