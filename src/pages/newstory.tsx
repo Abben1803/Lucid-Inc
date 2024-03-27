@@ -5,7 +5,6 @@ import { GetServerSidePropsContext } from 'next';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { getServerSession, Session } from 'next-auth';
 import React from 'react';
-import { useRouter } from 'next/router';
 import AsideComponent from '../components/AsideComponent';
 import { getSession } from 'next-auth/react';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -26,43 +25,25 @@ export default function newstory({session} : DashboardProps){
     const [storyPrompt, setStoryPrompt] = React.useState("")
     const [isLoading, setIsLoading] = React.useState(false);
     const [isFormValid, setIsFormValid] = React.useState(false);
+    const [isAsideOpen, setIsAsideOpen] = React.useState(true);
 
     const validateForm = () => {
         return (
             selectedAge !== "" &&
             selectedLanguage !== "" &&
             selectedGenre !== "" &&
-            selectedArtStyle !== "" 
-            
+            selectedArtStyle !== ""
         );
     };
 
-    const [isAsideOpen, setIsAsideOpen] = React.useState(true);
+    
     const toggleAside = () => {
       setIsAsideOpen(!isAsideOpen);
     };
   
-
-    const handleAgeSelection = (age: string) => {
-        setSelectedAge(age);
+    React.useEffect(() => {
         setIsFormValid(validateForm());
-    };
-    
-    const handleLanguageSelection = (language: string) => {
-        setSelectedLanguage(language);
-        setIsFormValid(validateForm());
-    };
-    
-    const handleGenreSelection = (genre: string) => {
-        setSelectedGenre(genre);
-        setIsFormValid(validateForm());
-    };
-    
-    const handleArtStyleSelection = (artStyle: string) => {
-        setSelectedArtStyle(artStyle);
-        setIsFormValid(validateForm());
-    };
-
+    }, [selectedAge, selectedLanguage, selectedGenre, selectedArtStyle]);
 
 
     const handleSubmit = async () => {
@@ -119,7 +100,7 @@ export default function newstory({session} : DashboardProps){
                                         <button
                                             key={age}
                                             className={`border-2 border-black w-12 h-12 ${selectedAge === age ? styles.selected : ''}`}
-                                            onClick={() => handleAgeSelection(age)}
+                                            onClick={() =>setSelectedAge(age)}
                                         >
                                             {age}
                                         </button>
@@ -133,7 +114,7 @@ export default function newstory({session} : DashboardProps){
                                         <button
                                             key={language}
                                             className={`border-2 border-black px-4 py-2 ${selectedLanguage === language ? styles.selected : ''}`}
-                                            onClick={() => handleLanguageSelection(language)}
+                                            onClick={() => setSelectedLanguage(language)}
                                         >
                                             {language}
                                         </button>
@@ -162,7 +143,7 @@ export default function newstory({session} : DashboardProps){
                                 <button
                                     key={genre}
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedGenre === genre ? styles.selected : ''}`}
-                                    onClick={() => handleGenreSelection(genre)}
+                                    onClick={() => setSelectedGenre(genre)}
                                 >
                                     <img src={`https://placehold.co/100x100`} alt={`Placeholder image for ${genre} genre`} />
                                     {genre}
@@ -177,7 +158,7 @@ export default function newstory({session} : DashboardProps){
                                 <button
                                     key={artStyle}
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedArtStyle === artStyle ? styles.selected : ''}`}
-                                    onClick={() => handleArtStyleSelection(artStyle)}
+                                    onClick={() => setSelectedArtStyle(artStyle)}
                                 >
                                     <img src={`https://placehold.co/100x100`} alt={`Placeholder image for ${artStyle} art style`} />
                                     {artStyle}
