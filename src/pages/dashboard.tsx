@@ -72,7 +72,7 @@ export default function dashboard({additionalBooks}: DashboardProps){
     setIsAsideOpen(!isAsideOpen);
   };
 
-  const itemsPerPage = 8;
+  const itemsPerPage = 4;
 
   const pages = Math.ceil(additionalBooks.length / itemsPerPage);
 
@@ -89,7 +89,7 @@ export default function dashboard({additionalBooks}: DashboardProps){
           isAsideOpen ? 'ml-64' : 'ml-0'
         }`}
       >
-        <div className="bg-base-100 p-6 shadow-sm rounded-lg mb-8">
+        <div className="mt-6 bg-base-100 p-6 shadow-sm rounded-lg mb-8">
           <h2 className="text-xl font-semibold mb-4">Your Recently Created Books</h2>
           <div className={styles.gridContainer}>
             {currentBooks.map((book) => (

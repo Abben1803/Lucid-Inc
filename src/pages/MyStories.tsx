@@ -71,7 +71,7 @@ export default function dashboard({bookmarks}: BookmarkProps){
     const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 8;
+    const itemsPerPage = 4;
 
     const pages = Math.ceil(bookmarks.length / itemsPerPage);
  
