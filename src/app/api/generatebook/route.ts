@@ -3,16 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route'; 
-import { NextApiRequest, NextApiResponse } from 'next';
-import { headers } from 'next/headers'
+import { NextApiResponse } from 'next';
 import { prisma } from '../../../lib/prisma';
 
 
-import story from '@/pages/[story]';
-
 
 export async function POST(req: Request, res: NextApiResponse) {
-    const headersList = headers();
     const session = await getServerSession(authOptions); // Getting our server side session.
     const userEmail = session?.user?.email; // session
 
@@ -59,7 +55,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 }
 
 
-async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
+export async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
     const OpenAI = require('openai');
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
@@ -84,7 +80,7 @@ async function getStory(story: string, age: string, language: string, genre: str
     return paragraphs;
 }
 
-async function getPrompts(story: string, artstyle: string) {
+export async function getPrompts(story: string, artstyle: string) {
     const OpenAI = require('openai');
     const openai = new OpenAI(process.env.OPENAI_API_KEY);
     const response = await openai.chat.completions.create({
@@ -105,7 +101,69 @@ async function getPrompts(story: string, artstyle: string) {
     return prompts;
 }
 
-async function generateAndSaveImagesStability(prompts: string[]) {
+
+
+export async function generateAndSaveImagesDallE(prompts: string[]) {
+    const imagePaths = [];
+    const OpenAI = require('openai');
+    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+
+    for (let i = 0; i < prompts.length; i++) {
+        const prompt = prompts[i];
+        try {
+            const response = await openai.images.generate({
+                prompt: prompt,
+                model: "dall-e-3",
+                n: 1,
+                size: '1024x1024',
+                response_format: "b64_json",
+            });
+
+            if (response.data && response.data.length > 0) {
+                const base64Image = response.data[0].b64_json;
+                const filename = `image-${Date.now()}-${i}.png`;
+                const imagePath = await saveImage(base64Image, filename);
+                imagePaths.push(imagePath);
+            } else {
+                console.error(`No image data received for prompt: ${prompt}`);
+            }
+        } catch (error) {
+            console.error(`Failed to generate image for prompt: ${prompt}`, error);
+        }
+    }
+
+    return imagePaths;
+}
+
+export async function saveImage(base64Data: string, filename: string): Promise<string> {
+    const buffer = Buffer.from(base64Data, 'base64');
+    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
+    fs.writeFileSync(imagePath, buffer);
+    return `/images/${filename}`;
+}
+
+export async function getTitle(story: string, language: string){
+    const OpenAI = require('openai')
+    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+    const response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+            {
+                role: 'system',
+                content: 'Your job is to generate a title for the following story. The title should be a single sentence.',
+            },
+            {
+                role: 'user',
+                content: `story: ${story}\nlanguage: ${language}`,
+            },
+        ],
+    });
+    const title = response.choices[0].message?.content?.trim() || "No Title Generated";
+    console.log(title);
+    return title;
+}
+
+export async function generateAndSaveImagesStability(prompts: string[]) {
     const imagePaths = [];
 
     for (let i = 0; i < prompts.length; i++) {
@@ -150,65 +208,4 @@ async function generateAndSaveImagesStability(prompts: string[]) {
     }
 
     return imagePaths;
-}
-
-
-async function generateAndSaveImagesDallE(prompts: string[]) {
-    const imagePaths = [];
-    const OpenAI = require('openai');
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
-
-    for (let i = 0; i < prompts.length; i++) {
-        const prompt = prompts[i];
-        try {
-            const response = await openai.images.generate({
-                prompt: prompt,
-                model: "dall-e-3",
-                n: 1,
-                size: '1024x1024',
-                response_format: "b64_json",
-            });
-
-            if (response.data && response.data.length > 0) {
-                const base64Image = response.data[0].b64_json;
-                const filename = `image-${Date.now()}-${i}.png`;
-                const imagePath = await saveImage(base64Image, filename);
-                imagePaths.push(imagePath);
-            } else {
-                console.error(`No image data received for prompt: ${prompt}`);
-            }
-        } catch (error) {
-            console.error(`Failed to generate image for prompt: ${prompt}`, error);
-        }
-    }
-
-    return imagePaths;
-}
-
-async function saveImage(base64Data: string, filename: string): Promise<string> {
-    const buffer = Buffer.from(base64Data, 'base64');
-    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
-    fs.writeFileSync(imagePath, buffer);
-    return `/images/${filename}`;
-}
-
-async function getTitle(story: string, language: string){
-    const OpenAI = require('openai')
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
-    const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-            {
-                role: 'system',
-                content: 'Your job is to generate a title for the following story. You must make sure the title is in the provided language.The title should be a single sentence.',
-            },
-            {
-                role: 'user',
-                content: `story: ${story}\nlanguage: ${language}`,
-            },
-        ],
-    });
-    const title = response.choices[0].message?.content?.trim() || "No Title Generated";
-    console.log(title);
-    return title;
 }

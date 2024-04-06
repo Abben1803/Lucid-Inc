@@ -1,6 +1,5 @@
 import { prisma } from '../../../../lib/prisma'
 import { compare } from 'bcrypt'
-import { Session } from 'inspector';
 import NextAuth, { type NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
