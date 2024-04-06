@@ -1,7 +1,7 @@
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import styles from '../components/newstory.module.css'
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { getServerSession, Session } from 'next-auth';
 import React from 'react';
@@ -16,7 +16,7 @@ interface DashboardProps {
 }
 
 
-export default function newstory({session} : DashboardProps){
+export default function newstory({session}: InferGetServerSidePropsType<typeof getServerSideProps>){
 
     const [selectedAge, setSelectedAge] = React.useState("");
     const [selectedLanguage, setSelectedLanguage] = React.useState("");
@@ -81,13 +81,27 @@ export default function newstory({session} : DashboardProps){
         setIsLoading(false);
     }
 
+    const genreImages = {
+        'Adventure': '/images/adventure.webp', 
+        'Fantasy': '/images/fantasy.webp', 
+        'Mystery': '/images/mystery.webp', 
+        'Action/Super-hero': '/images/action.webp' 
+      };
+    
+    const artStyleImages = {
+        'Water Color': '/images/watercolor.webp', 
+        'Comic Book': '/images/comic.webp', 
+        'Pixel Art': '/images/pixel.webp', 
+        'Cartoon': '/images/cartoon.webp' 
+    };
+
     return(
         <>
-        <div className="flex h-screen bg-gray-100 text-black">
+        <div className="flex h-screen bg-gray-100 ">
             <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
 
-            <div className="flex-1 bg-gray-100 p-8">
-                <main className= {`flex-1 bg-gray-100 p-8 transition-all duration-300 ${
+            <div className="flex-1 bg-gradient-to-r from-neutral to-base-100 p-8">
+                <main className= {`flex-1 bg-gradient-to-r from-neutral to-base-100 p-8 transition-all duration-300 ${
                     isAsideOpen ? 'ml-64' : 'ml-0'
                 }`}>
                     <section className="mb-4">
@@ -99,7 +113,7 @@ export default function newstory({session} : DashboardProps){
                                     {['6', '7', '8', '9', '10'].map((age) => (
                                         <button
                                             key={age}
-                                            className={`border-2 border-black w-12 h-12 ${selectedAge === age ? styles.selected : ''}`}
+                                            className={`border-2 border-black w-12 h-12 btn btn-outline btn-secondary ${selectedAge === age ? styles.selected : ''}`}
                                             onClick={() =>setSelectedAge(age)}
                                         >
                                             {age}
@@ -113,7 +127,7 @@ export default function newstory({session} : DashboardProps){
                                     {['English', 'हिंदी', 'عربي'].map((language) => (
                                         <button
                                             key={language}
-                                            className={`border-2 border-black px-4 py-2 ${selectedLanguage === language ? styles.selected : ''}`}
+                                            className={`border-2 border-black px-4 py-2 btn btn-outline btn-secondary ${selectedLanguage === language ? styles.selected : ''}`}
                                             onClick={() => setSelectedLanguage(language)}
                                         >
                                             {language}
@@ -142,10 +156,10 @@ export default function newstory({session} : DashboardProps){
                             {['Adventure', 'Fantasy', 'Mystery', 'Action/Super-hero'].map((genre) => (
                                 <button
                                     key={genre}
-                                    className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedGenre === genre ? styles.selected : ''}`}
+                                    className={`${styles['genre-art-style']} border-2 border-black  p-4 text-center ${selectedGenre === genre ? styles.selected : ''}`}
                                     onClick={() => setSelectedGenre(genre)}
                                 >
-                                    <img src={`https://placehold.co/100x100`} alt={`Placeholder image for ${genre} genre`} />
+                                    <img src={genreImages[genre]} alt={`Placeholder image for ${genre} genre`} />
                                     {genre}
                                 </button>
                             ))}
@@ -154,13 +168,13 @@ export default function newstory({session} : DashboardProps){
                     <section className="mb-4">
                         <h2 className="font-semibold mb-2">Pick an art-style</h2>
                         <div className="grid grid-cols-4 gap-4">
-                            {['Minecraft', 'Comic Book', 'Pixel Art', 'Cartoon'].map((artStyle) => (
+                            {['Water Color', 'Comic Book', 'Pixel Art', 'Cartoon'].map((artStyle) => (
                                 <button
                                     key={artStyle}
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedArtStyle === artStyle ? styles.selected : ''}`}
                                     onClick={() => setSelectedArtStyle(artStyle)}
                                 >
-                                    <img src={`https://placehold.co/100x100`} alt={`Placeholder image for ${artStyle} art style`} />
+                                    <img src={artStyleImages[artStyle]} alt={`Placeholder image for ${artStyle} art style`} />
                                     {artStyle}
                                 </button>
                             ))}
