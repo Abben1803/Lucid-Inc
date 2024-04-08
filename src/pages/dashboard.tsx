@@ -2,14 +2,13 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../app/globals.css";
 import Link from "next/link";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession, Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import { authOptions } from "../app/api/auth/[...nextauth]/route";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { prisma } from "../lib/prisma";
 import styles from "../components/newstory.module.css";
 import AsideComponent from "../components/AsideComponent";
-import { DashboardProps } from "../lib/interfaces";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);

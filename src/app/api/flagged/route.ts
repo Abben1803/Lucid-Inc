@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ message: 'Book flagged successfully' }, { status: 200 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error flagging book:', error);
-    return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ message: 'Internal server error: ' + error.message }, { status: 500 });
   }
 }
