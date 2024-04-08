@@ -6,7 +6,8 @@ import { authOptions } from '../auth/[...nextauth]/route';
 import { NextApiResponse } from 'next';
 import { prisma } from '../../../lib/prisma';
 
-
+const OpenAI = require('openai')
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 export async function POST(req: Request, res: NextApiResponse) {
     const session = await getServerSession(authOptions); // Getting our server side session.
@@ -56,8 +57,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
 
 export async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
-    const OpenAI = require('openai');
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+
 
     const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt ${story}. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
 
@@ -81,8 +81,7 @@ export async function getStory(story: string, age: string, language: string, gen
 }
 
 export async function getPrompts(story: string, artstyle: string) {
-    const OpenAI = require('openai');
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
@@ -105,8 +104,7 @@ export async function getPrompts(story: string, artstyle: string) {
 
 export async function generateAndSaveImagesDallE(prompts: string[]) {
     const imagePaths = [];
-    const OpenAI = require('openai');
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+
 
     for (let i = 0; i < prompts.length; i++) {
         const prompt = prompts[i];
@@ -143,8 +141,6 @@ export async function saveImage(base64Data: string, filename: string): Promise<s
 }
 
 export async function getTitle(story: string, language: string){
-    const OpenAI = require('openai')
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [

@@ -1,9 +1,10 @@
 import { prisma } from '../../../lib/prisma';
 import bcrypt from 'bcrypt';
 import { NextRequest, NextResponse } from 'next/server';
+import validator from 'validator';
 
 
-// Not my code courtesy of NextAuth.js
+
 
 export async function POST(req: NextRequest, res: NextResponse) {
   
@@ -57,13 +58,23 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 }
 
-// Taken from other sources validating input in the backend.
 function validateEmail(email: string) {
-  // eslint-disable-next-line no-useless-escape
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test(email);
+  // Sanitize the email input
+  const sanitizedEmail = validator.normalizeEmail(email, { all_lowercase: true });
+
+  // Check if the sanitized email is a non-empty string
+  if (typeof sanitizedEmail !== 'string' || sanitizedEmail.length === 0) {
+    return false; 
+  }
+
+  const emailRegex = /^[\w\-.]+@[\w-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(sanitizedEmail);
 }
 
 function validatePassword(password: string) {
-  return password.length >= 8 && password.length <= 20;
+  // Sanitize the password input
+  const sanitizedPassword = validator.escape(password);
+
+  // Validate the sanitized password
+  return sanitizedPassword.length >= 8 && sanitizedPassword.length <= 20;
 }

@@ -28,33 +28,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   if (req.method === 'POST') {
     try{
-      const bookmark = await prisma.bookmark.create({
-        data: {
+      const existingBookmark = await prisma.bookmark.findFirst({
+        where: {
           bookId: parseInt(bookId as string, 10),
           userEmail: userEmail,
         },
       });
+      if(!existingBookmark){
+        const bookmark = await prisma.bookmark.create({
+          data: {
+            bookId: parseInt(bookId as string, 10),
+            userEmail: userEmail,
+          },
+        });
+        return res.status(201).json({ message: 'Bookmark created successfully' });
+      }else if(existingBookmark){
+        const bookmark = await prisma.bookmark.delete({
+          where: {
+            id: existingBookmark.id,
+          },
+        });
+        return res.status(200).json({ message: 'Bookmark deleted successfully' });
+      }
     } catch(error) {
       console.error('Error creating bookmark:', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
   }
-
-  if(req.method === 'DELETE') {
-    try{
-      const bookmark = await prisma.bookmark.deleteMany({
-        where: {
-          bookId: parseInt(bookId as string, 10),
-        },
-      });
-
-    } catch (error) {
-      console.error('Error deleting bookmark:', error);
-      return res.status(500).json({ message: 'Internal server error' });
-    }
-  }
-
-
 
   if (req.method === 'GET') {
     try {
@@ -80,7 +80,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (!book) {
         return res.status(404).json({ message: 'Book not found' });
       }
-
+      const isBookmarked = await prisma.bookmark.findFirst({
+        where: {
+          bookId: parseInt(bookId as string, 10),
+          userEmail: userEmail,
+        },
+      });
 
       const bookData = {
         id: book.id,
@@ -90,10 +95,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           paragraph: paragraphs.paragraph,
           image: paragraphs.image?.image,
         })),
+      
       };
-      console.log('Book data:', bookData);
 
-      return res.status(200).json(bookData);
+
+
+      return res.status(200).json({...bookData, isBookmarked : !!isBookmarked});
+      
     } catch (error) {
       console.error('Error fetching book:', error);
       return res.status(500).json({ message: 'Internal server error' });

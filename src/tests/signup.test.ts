@@ -2,7 +2,6 @@ import { POST } from '../app/api/signup/route';
 import { expect } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '../lib/prisma';
-import bcrypt from 'bcrypt';
 
 async function clearDatabase() {
   // Clear the database by deleting all users
@@ -14,14 +13,17 @@ beforeAll(async () => {
   await clearDatabase();
 });
 
+
 afterAll(async () => {
   // Close Prisma client after all tests are finished
   await prisma.$disconnect();
 });
 
+
+
 async function testSignup() {
   const testEmail = 'test@example.com';
-  const testPassword = 'password123';
+  const testPassword = 'NwnO-Fa3S6-6';
 
   try {
     // Create a request object with the test data
@@ -121,7 +123,7 @@ test('Signup with invalid email format', async () => {
     },
     body: JSON.stringify({
       email: 'invalid-email', // Provide an invalid email format
-      password: 'password123',
+      password: 'NwnO-Fa3S6-6',
     }),
   });
 
@@ -146,3 +148,40 @@ test('Signup with existing user', async () => {
 
   await testSignup();
 });
+
+
+test('Input sanitized for user creation', async () => {
+  // Mock the database response with a user object containing an XSS payload in the password
+  jest.spyOn(prisma.user, 'findUnique').mockResolvedValueOnce({
+    id: 1,
+    email: 'test@example.com',
+    password: '`<script>alert("XSS")</script>`',
+    isAdmin: false,
+    registrationDate: new Date(),
+  });
+
+  // Create a request object with the test data
+  const req = new NextRequest('http://localhost:3000/api/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: 'test@example.com',
+      password: '`<script>alert("XSS")</script>`',
+    }),
+  });
+
+  // Call the POST handler with the test request
+  const res = await POST(req, new NextResponse());
+
+  // Assert that the request was rejected due to invalid input (status 400)
+  expect(res.status).toBe(400);
+
+  // Assert that the response contains the expected error message for weak password
+  const { message } = await res.json();
+  expect(message).toBe('Password is too weak.');
+});
+
+
+// back end test s

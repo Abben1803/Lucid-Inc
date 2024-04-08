@@ -1,8 +1,7 @@
 import settingsHandler from '../app/api/settings/settings';
 import { prisma } from '../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '../app/api/auth/[...nextauth]/route';
+
 
 jest.mock('../lib/prisma', () => ({
   prisma: {
@@ -25,7 +24,7 @@ jest.mock('next-auth', () => {
   };
 });
 
-describe('PUT /api/updateUser', () => {
+describe('PUT /api/settings', () => {
   let req: Partial<NextApiRequest>;
   let res: Partial<NextApiResponse>;
 

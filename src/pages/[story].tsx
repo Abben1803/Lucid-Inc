@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
 import { Book, Paragraph, Image } from '../lib/interfaces';
+import styles from '../components/styleoption.module.css'
 
 
 
@@ -51,6 +52,7 @@ export default function story() {
                         const data = await response.json();
                         //console.log('Received book data:', data);
                         setBook(data);
+                        setIsBookmarked(data.isBookmarked);
                     }else if (response.status === 403) {
                         router.push('/Unauthorized/forbidden');
                     } else {
@@ -65,6 +67,30 @@ export default function story() {
         if (session) {
           fetchBook();
         }
+    }, [bookId, session]);
+    
+    useEffect(() => {
+        const fetchBookmark = async () => {
+            try {
+                if (bookId && session) {
+                    const response = await fetch(`/api/${bookId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setIsBookmarked(data.isBookmarked);
+                    } else {
+                        setIsBookmarked(false);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching bookmark:', error);
+                setIsBookmarked(false);
+            }
+        };
+    
+        if (session) {
+            fetchBookmark();
+        }
+    
     }, [bookId, session]);
 
     
@@ -90,6 +116,7 @@ export default function story() {
           console.error('Error flagging book:', error);
         }
     }
+
     const handleDeleteClick = async (event: any) => {
         event.preventDefault();
     
@@ -111,11 +138,10 @@ export default function story() {
 
     const handleBookmarkClick = async (event: any) => {
         event.preventDefault();
-      
         try {
           if (bookId && session) {
             const response = await fetch(`/api/${bookId}`, {
-              method: isBookmarked ? 'DELETE' : 'POST',
+              method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
@@ -124,6 +150,7 @@ export default function story() {
             if (response.ok) {
               setIsBookmarked(!isBookmarked);
             }
+            console.log(response);
           }
         } catch (error) {
           console.error('Error updating bookmark:', error);
@@ -159,13 +186,12 @@ export default function story() {
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
                         <button
-                            className={`btn btn-sm ${isBookmarked ? 'btn-warning' : 'btn-ghost'}`}
+                            className={`${styles.bookmarkButton} ${isBookmarked ? styles.bookmarkButtonActive : ''}`}
                             onClick={handleBookmarkClick}
-                            disabled={isBookmarked}
                             >
                             {isBookmarked ? 'Bookmarked' : 'Bookmark'}
                         </button>
-                        
+                                        
                         <button className="text-error text-sm" onClick = {handleFlagClick}>
                             Flag Story
                         </button>
