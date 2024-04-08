@@ -1,156 +1,135 @@
-import '@fortawesome/fontawesome-svg-core/styles.css';
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../app/globals.css";
-import Link from 'next/link';
-import { GetServerSidePropsContext } from 'next';
-import { getServerSession, Session } from 'next-auth';
-import { authOptions } from '../app/api/auth/[...nextauth]/route';
-import { useState } from 'react';
-import { useRouter } from 'next/router';
-import { prisma } from '../lib/prisma';
-import styles from '../components/newstory.module.css'
-import AsideComponent from '../components/AsideComponent';
-
-
-//import { Bookmark, Book } from '@prisma/client';
-
-import { Book as PrismaBook, Bookmark } from '@prisma/client';
-
-interface DashboardProps {
-  session: Session | null;
-  bookmarkedBooks: (Bookmark & { book: Book })[];
-  additionalBooks: Book[];
-}
-
-type Book = PrismaBook & {
-    paragraph: {
-      image: {
-        image: string;
-      };
-    }[];
-  };
+import Link from "next/link";
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../app/api/auth/[...nextauth]/route";
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { prisma } from "../lib/prisma";
+import styles from "../components/newstory.module.css";
+import AsideComponent from "../components/AsideComponent";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getServerSession(context.req, context.res, authOptions);
-    console.log('Session in getServerSideProps:', session);
+  const session = await getServerSession(context.req, context.res, authOptions);
+  console.log("Session in getServerSideProps:", session);
 
-  
-    if (!session) {
-      return {
-        redirect: {
-          destination: '/login',
-          permanent: false,
-        },
-      };
-    }
-    const userEmail = session.user?.email || null;
-
-    const bookmarkedBooks = await prisma.bookmark.findMany({
-            where: {
-                user: {
-                    email: userEmail? userEmail : undefined,
-                },
-            },
-            include: {
-                book: true,
-            },
-        });
-
-    const additionalBooks = await prisma.book.findMany({
-        where: {
-            userEmail: userEmail? userEmail : undefined,
-        },
-        select: {
-            id: true,
-            title: true,
-            paragraphs: {
-                select: {
-                    image: {
-                        select: {
-                            image:true,
-                        },
-                    },
-                },
-            },
-        },
-    });
-  
-    
-  
+  if (!session) {
     return {
-      props: {
-        session: {
-          ...session,
-          user: {
-            email: userEmail,
-          },
-        },
-        bookmarkedBooks,
-        additionalBooks,
+      redirect: {
+        destination: "/login",
+        permanent: false,
       },
     };
-};
-  
+  }
+  const userEmail = session.user?.email || null;
 
+  const additionalBooks = await prisma.book.findMany({
+    where: {
+      userEmail: userEmail ? userEmail : undefined,
+      flagged: null,
+    },
+    select: {
+      id: true,
+      title: true,
+      paragraphs: {
+        select: {
+          image: {
+            select: {
+              image: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
-export default function dashboard({session, bookmarkedBooks, additionalBooks}: DashboardProps){
-    const router = useRouter();
+  return {
+    props: {
+      session: {
+        ...session,
+        user: {
+          email: userEmail,
+        },
+      },
+      additionalBooks,
+    },
+  };
+}
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 8;
+export default function dashboard({
+              additionalBooks,
+            }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const router = useRouter();
 
-    const pages = Math.ceil(additionalBooks.length / itemsPerPage);
- 
-    const startIndex = (currentPage -1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentBooks = additionalBooks.slice(startIndex, endIndex);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isAsideOpen, setIsAsideOpen] = useState(true);
+  const toggleAside = () => {
+    setIsAsideOpen(!isAsideOpen);
+  };
 
-    console.log('Current page:', currentPage);
+  const itemsPerPage = 4;
 
-    return(
-        <div className="flex h-screen bg-gray-100 text-black">
-            <AsideComponent />
-            <main className="flex-1 p-6">
-                <h1 className="text-xl font-semibold mb-4">Hello, young storyteller!</h1>
-                <div className="bg-white p-6 shadow-sm rounded-lg mb-8"> 
-                    <h2 className="text-lg font-semibold mb-4">Your Recently Created Books</h2>
-                    <div className={styles.gridContainer}>          
-                        {currentBooks.map((book) => (
-                            <Link key={book.id} href={`/${book.id}`} className={styles.bookCard}>
-                                {book.paragraph?.[0]?.image?.image ? (
-                                    <img
-                                        src={book.paragraph[0].image?.toString()}
-                                        alt={book.title}
-                                        className="styles.bookImage"
-                                    />
-                                ) : (
-                                    <div className={'${styles.bookImage} h-32'}></div>
-                                )}
-                                <div className={'${styles.title} text-center mt'}>{book.title}</div>
-                            </Link>
-                        ))}
-                    </div>
-                    <div className="flex justify-center">
-                        {Array.from({ length: pages }, (_, i) => (
-                            <button
-                                key={i + 1}
-                                onClick={() => setCurrentPage(i + 1)}
-                                className={`p-2 ${currentPage === i + 1 ? 'bg-gray-300' : ''}`}
-                            >
-                                {i + 1}
-                            </button>
-                        ))}
-                    </div>
+  const pages = Math.ceil(additionalBooks.length / itemsPerPage);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentBooks = additionalBooks.slice(startIndex, endIndex);
+
+  return (
+    <div className="flex h-screen bg-base-200 text-base-content">
+      <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+      <main
+        className={`flex-1 p-6 transition-all duration-300 ${
+          isAsideOpen ? "ml-64" : "ml-0"
+        }`}
+      >
+        <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100">
+          <h2 className="text-xl font-semibold mb-4">
+            Your Recently Created Books
+          </h2>
+          <div className={styles.gridContainer}>
+            {currentBooks.map((book) => (
+              <Link
+                key={book.id}
+                href={`/${book.id}`}
+                className="card shadow-2xl rounded-lg hover:bg-primary/50 transition duration-300 overflow-hidden"
+              >
+                <div className="relative w-full h-96">
+                  {" "}
+                  {/* Container with fixed height and hidden overflow */}
+                  {book.paragraphs?.[0]?.image?.image ? (
+                    <img
+                      src={book.paragraphs[0].image.image}
+                      alt={book.title}
+                      className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-110 rounded-t-lg" // Scale image on hover
+                    />
+                  ) : (
+                    <div className="bg-base-300 w-full h-full rounded-t-lg"></div> // Placeholder if no image
+                  )}
                 </div>
-                <div className="mb-8">
-                    <h2 className="text-lg font-semibold mb-4">Your Additional Tales</h2>
-                    {additionalBooks.slice(0,4).map((recentbooks) => (
-                        <div key={recentbooks.id} className="flex items-center mb-2">
-                            <i className="fas fa-times text-gray-600 mr-2"></i>
-                            <span>{recentbooks.title}</span>
-                        </div>
-                    ))}
-                </div>
-            </main>
+                <h3 className="card-body text-2xl font-bold text-center p-4">
+                  {book.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-4">
+            {Array.from({ length: pages }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`btn btn-sm ${
+                  currentPage === i + 1 ? "btn-accent" : ""
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
         </div>
-    );
+      </main>
+    </div>
+  );
 }

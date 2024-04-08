@@ -1,0 +1,25 @@
+.bookmarkButton {
+    background-color: transparent;
+    color: #a3a3a3;
+    border: 1px solid #4b5563;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+  
+.bookmarkButton:hover {
+    background-color: #4b5563;
+    color: #fff;
+}
+  
+.bookmarkButtonActive {
+    background-color: #10b981;
+    color: #fff;
+    border-color: #10b981;
+}
+  
+.bookmarkButtonActive:hover {
+    background-color: #059669;
+    border-color: #059669;
+}

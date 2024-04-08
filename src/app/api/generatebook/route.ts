@@ -1,19 +1,15 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/route'; 
-import { NextApiRequest, NextApiResponse } from 'next';
-import { headers } from 'next/headers'
+import { NextApiResponse } from 'next';
+import { prisma } from '../../../lib/prisma';
 
-
-import story from '@/pages/[story]';
-
-const prisma = new PrismaClient();
+const OpenAI = require('openai')
+const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
 export async function POST(req: Request, res: NextApiResponse) {
-    const headersList = headers();
     const session = await getServerSession(authOptions); // Getting our server side session.
     const userEmail = session?.user?.email; // session
 
@@ -27,13 +23,13 @@ export async function POST(req: Request, res: NextApiResponse) {
     const storyParagraphs = await getStory(prompt, age, language, genre, artstyle);
 
     // Generate image prompts
-    const imagePrompts = await getPrompts(storyParagraphs.join('|'));
+    const imagePrompts = await getPrompts(storyParagraphs.join('|'), artstyle);
 
-    // Generate and save images
-    const imagePaths = await generateAndSaveImages(imagePrompts);
+
+    const imagePaths = await generateAndSaveImagesDallE(imagePrompts);
 
     // Generate title
-    const title = await getTitle(storyParagraphs.join('|'));
+    const title = await getTitle(storyParagraphs.join('|'), language);
 
     const book = await prisma.book.create({
         data: {
@@ -60,11 +56,10 @@ export async function POST(req: Request, res: NextApiResponse) {
 }
 
 
-async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
-    const OpenAI = require('openai');
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+export async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
 
-    const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
+
+    const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt ${story}. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
 
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -85,19 +80,18 @@ async function getStory(story: string, age: string, language: string, genre: str
     return paragraphs;
 }
 
-async function getPrompts(story: string) {
-    const OpenAI = require('openai')
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
+export async function getPrompts(story: string, artstyle: string) {
+
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
             {
                 role: 'system',
-                content: 'You are a friendly assistant. Your job is to generate images prompts for each paragraph for the following story. Each prompt should be very descriptive sentence. Please list all prompts seperated by "|" symbol. For example, "a good day | a spooky figure | a lit up street". You must make sure that for each paragraph of the story you generate a prompt for the image.',
+                content: 'You are a friendly assistant. Your job is to generate highly descriptive image prompts for each paragraph of the following story. Each prompt should capture the key elements, actions, and emotions described in the corresponding paragraph, while explicitly incorporating the specified art style. The prompts should provide enough detail to create vivid and engaging images that accurately represent the story. Make sure to include the art style in each prompt. Please list all prompts separated by the "|" symbol.',
             },
             {
                 role: 'user',
-                content: `story: ${story}`,
+                content: `story: ${story}\nartstyle: ${artstyle}`,
             },
         ],
     });
@@ -106,7 +100,66 @@ async function getPrompts(story: string) {
     return prompts;
 }
 
-async function generateAndSaveImages(prompts: string[]) {
+
+
+export async function generateAndSaveImagesDallE(prompts: string[]) {
+    const imagePaths = [];
+
+
+    for (let i = 0; i < prompts.length; i++) {
+        const prompt = prompts[i];
+        try {
+            const response = await openai.images.generate({
+                prompt: prompt,
+                model: "dall-e-3",
+                n: 1,
+                size: '1024x1024',
+                response_format: "b64_json",
+            });
+
+            if (response.data && response.data.length > 0) {
+                const base64Image = response.data[0].b64_json;
+                const filename = `image-${Date.now()}-${i}.png`;
+                const imagePath = await saveImage(base64Image, filename);
+                imagePaths.push(imagePath);
+            } else {
+                console.error(`No image data received for prompt: ${prompt}`);
+            }
+        } catch (error) {
+            console.error(`Failed to generate image for prompt: ${prompt}`, error);
+        }
+    }
+
+    return imagePaths;
+}
+
+export async function saveImage(base64Data: string, filename: string): Promise<string> {
+    const buffer = Buffer.from(base64Data, 'base64');
+    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
+    fs.writeFileSync(imagePath, buffer);
+    return `/images/${filename}`;
+}
+
+export async function getTitle(story: string, language: string){
+    const response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+            {
+                role: 'system',
+                content: 'Your job is to generate a title for the following story. The title should be a single sentence.',
+            },
+            {
+                role: 'user',
+                content: `story: ${story}\nlanguage: ${language}`,
+            },
+        ],
+    });
+    const title = response.choices[0].message?.content?.trim() || "No Title Generated";
+    console.log(title);
+    return title;
+}
+
+export async function generateAndSaveImagesStability(prompts: string[]) {
     const imagePaths = [];
 
     for (let i = 0; i < prompts.length; i++) {
@@ -151,32 +204,4 @@ async function generateAndSaveImages(prompts: string[]) {
     }
 
     return imagePaths;
-}
-
-async function saveImage(base64Data: string, filename: string): Promise<string> {
-    const buffer = Buffer.from(base64Data, 'base64');
-    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
-    fs.writeFileSync(imagePath, buffer);
-    return `/images/${filename}`;
-}
-
-async function getTitle(story: string){
-    const OpenAI = require('openai')
-    const openai = new OpenAI(process.env.OPENAI_API_KEY);
-    const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-            {
-                role: 'system',
-                content: 'Your job is to generate a title for the following story. You must make sure that the title is short and descriptive. The title should be a single sentence.',
-            },
-            {
-                role: 'user',
-                content: `story: ${story}`,
-            },
-        ],
-    });
-    const title = response.choices[0].message?.content?.trim() || "No Title Generated";
-    console.log(title);
-    return title;
 }

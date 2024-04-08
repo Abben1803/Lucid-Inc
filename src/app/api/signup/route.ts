@@ -1,11 +1,13 @@
 import { prisma } from '../../../lib/prisma';
 import bcrypt from 'bcrypt';
 import { NextRequest, NextResponse } from 'next/server';
+import validator from 'validator';
 
 
-// Not my code courtesy of NextAuth.js
 
-export async function POST(req: NextRequest) {
+
+export async function POST(req: NextRequest, res: NextResponse) {
+  
   if (!req.body) {
     return NextResponse.json({ message: 'Request body is missing.' }, { status: 400 });
   }
@@ -16,6 +18,14 @@ export async function POST(req: NextRequest) {
   // Validate input
   if (!email || !password) {
     return NextResponse.json({ message: 'Email and password are required.' }, { status: 400 });
+  }
+
+  if(!validateEmail(email)) {
+    return NextResponse.json({ message: 'Invalid email format.' }, { status: 400 });
+  }
+
+  if(!validatePassword(password)) {
+    return NextResponse.json({ message: 'Password is too weak.' }, { status: 400 });
   }
 
   try {
@@ -46,5 +56,25 @@ export async function POST(req: NextRequest) {
       console.error('Signup error:', error);
       return NextResponse.json({ message: 'Internal server error', error: error.message }, { status: 500 });
   }
+}
 
+function validateEmail(email: string) {
+  // Sanitize the email input
+  const sanitizedEmail = validator.normalizeEmail(email, { all_lowercase: true });
+
+  // Check if the sanitized email is a non-empty string
+  if (typeof sanitizedEmail !== 'string' || sanitizedEmail.length === 0) {
+    return false; 
+  }
+
+  const emailRegex = /^[\w\-.]+@[\w-]+\.[a-zA-Z]{2,}$/;
+  return emailRegex.test(sanitizedEmail);
+}
+
+function validatePassword(password: string) {
+  // Sanitize the password input
+  const sanitizedPassword = validator.escape(password);
+
+  // Validate the sanitized password
+  return sanitizedPassword.length >= 8 && sanitizedPassword.length <= 20;
 }

@@ -3,58 +3,74 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { Book } from '@prisma/client';
 import { prisma } from '../lib/prisma';
+import Link from 'next/link';
+
+
 
 interface AdminProps {
-  newBooks: Book[];
+  newBooks: (Book & { flagged: boolean })[];
 }
 
-export default function Admin({ newBooks }: AdminProps) {
+export default function AdminPage({ newBooks }: AdminProps) {
   return (
     <div>
-      <h1>Admin Dashboard</h1>
-      <h2>New Books</h2>
-      {newBooks.length > 0 ? (
-        <ul>
+      <h1>Admin Page</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
           {newBooks.map((book) => (
-            <li key={book.id}>
-              <h3>{book.title}</h3>
-              <p>Author: {book.userEmail}</p>
-              <p>Created At: {book.createdAt.toISOString()}</p>
-            </li>
+            <tr key={book.id} style={{ backgroundColor: book.flagged ? 'red' : 'transparent' }}>
+              <td>{book.id}</td>
+              <td>
+                <Link href={`/${book.id}`}>{book.title}</Link>
+              </td>
+              <td>{book.userEmail}</td>
+              <td>{new Date(book.createdAt).toLocaleDateString()}</td>
+            </tr>
           ))}
-        </ul>
-      ) : (
-        <p>No new books found.</p>
-      )}
+        </tbody>
+      </table>
     </div>
   );
 }
 
-// need to fix this function i need to implement book marking
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getServerSession(context.req, context.res, authOptions);
 
-    if (!session || !(session.user as { isAdmin?: boolean }).isAdmin) {
-        return {
-        redirect: {
-            destination: '/notfound/',
-            permanent: false,
-        },
-        };
-    }
-
-    const newBooks = await prisma.book.findMany({
-        where: {
-          adminReview: {}
-        },
-        orderBy: {
-          createdAt: 'desc',
-        },
-    });
-
+  if (!session || !(session.user as { isAdmin?: boolean }).isAdmin) {
     return {
-        props: {
-        newBooks,
-        },
+      redirect: {
+        destination: '/notfound/',
+        permanent: false,
+      },
     };
+  }
+
+  const newBooks = await prisma.book.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      flagged: true,
+    },
+  });
+
+  const serializedNewBooks = newBooks.map((book) => ({
+    ...book,
+    createdAt: book.createdAt.toISOString(),
+    flagged: !!book.flagged,
+  }));
+
+  return {
+    props: {
+      newBooks: serializedNewBooks,
+    },
+  };
 }

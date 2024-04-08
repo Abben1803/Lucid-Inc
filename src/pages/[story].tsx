@@ -1,43 +1,34 @@
 import React, { useEffect, useState} from 'react';
-import Image from 'next/image';
-import "../app/globals.css";
+
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
+import { Book, Paragraph, Image } from '../lib/interfaces';
+import styles from '../components/styleoption.module.css'
 
-interface Book {
-    id: number;
-    title: string;
-    paragraphs: Paragraph[];
-}
 
-interface Paragraph {
-    id: number;
-    paragraph: string;
-    image?: Image;
-}
-
-interface Image {
-    id: number;
-    image: string;
-}
 
 export default function story() { 
     const [book, setBook] = useState<Book | null>(null);
-    const [title, setTitle] = useState("");
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
     const { story: bookId } = router.query;
     const { data: session } = useSession();
+    const [isBookmarked, setIsBookmarked] = useState(false);
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
+    const toggleAside = () => {
+      setIsAsideOpen(!isAsideOpen);
+    };
     
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
+            
             switch (event.key) {
                 case 'ArrowRight':
-                    setCurrentParagraphIndex((prevIndex) => Math.min(prevIndex + 1, book?.paragraphs?.length ?? 0 - 1));
+                    setCurrentParagraphIndex((prevIndex) => Math.min(prevIndex + 1, book?.paragraphs?.length ?? 1));
                     break;
                 case 'ArrowLeft':
-                    setCurrentParagraphIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+                    setCurrentParagraphIndex((prevIndex) => Math.max(prevIndex - 1, 1));
                     break;
                 default:
                     break;
@@ -46,22 +37,26 @@ export default function story() {
     
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [book?.paragraphs.length]);
+    }, [book?.paragraphs?.length ?? 1]);
 
     useEffect(() => {
         const fetchBook = async () => {
             try{
                 if(bookId && session ) {
-                    const url = `/api/${bookId}`;
+                    const isAdmin = (session.user as { isAdmin?: boolean })?.isAdmin;
+                    const url = isAdmin ? `/api/admin/${bookId}` : `/api/${bookId}`;
                     console.log('Fetching book from URL:', url);
                     const response = await fetch(url);
                     if(response.ok){
                         console.log('Response:', response.status);
                         const data = await response.json();
-                        console.log('Received book data:', data);
+                        //console.log('Received book data:', data);
                         setBook(data);
-                    }else {
-                        return <div>Unauthorized</div>;
+                        setIsBookmarked(data.isBookmarked);
+                    }else if (response.status === 403) {
+                        router.push('/Unauthorized/forbidden');
+                    } else {
+                        router.push('/404/notfound');
                     }
                 }
             }catch(error){
@@ -72,62 +67,179 @@ export default function story() {
         if (session) {
           fetchBook();
         }
-      }, [bookId, session]);
+    }, [bookId, session]);
+    
+    useEffect(() => {
+        const fetchBookmark = async () => {
+            try {
+                if (bookId && session) {
+                    const response = await fetch(`/api/${bookId}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        setIsBookmarked(data.isBookmarked);
+                    } else {
+                        setIsBookmarked(false);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching bookmark:', error);
+                setIsBookmarked(false);
+            }
+        };
+    
+        if (session) {
+            fetchBookmark();
+        }
+    
+    }, [bookId, session]);
 
-    if(!session) return <div>Unauthorized</div>;
+    
+
+    const handleFlagClick = async (event: any) => {
+        event.preventDefault();
+      
+        try {
+          if (bookId && session) {
+            const response = await fetch('/api/flagged/', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ bookId }),
+            });
+            if (response.ok) {
+              alert('Book flagged successfully');
+              router.push('/dashboard');
+            }
+          }
+        } catch (error) {
+          console.error('Error flagging book:', error);
+        }
+    }
+
+    const handleDeleteClick = async (event: any) => {
+        event.preventDefault();
+    
+        try {
+            if (bookId && session) {
+                const response = await fetch(`/api/admin/${bookId}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    router.push('/dashboard');
+                } else {
+                    throw new Error('Failed to delete book');
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting book:', error);
+        }
+    };
+
+    const handleBookmarkClick = async (event: any) => {
+        event.preventDefault();
+        try {
+          if (bookId && session) {
+            const response = await fetch(`/api/${bookId}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ bookId }),
+            });
+            if (response.ok) {
+              setIsBookmarked(!isBookmarked);
+            }
+            console.log(response);
+          }
+        } catch (error) {
+          console.error('Error updating bookmark:', error);
+        }
+    };
+
+    if (!session) return <div>Unauthorized</div>;
     if (!book) return <div>Loading...</div>;
-        
 
-    const totalPages = book.paragraphs.length-1;
-    console.log("Current image URL:", book.paragraphs[currentParagraphIndex].image || 'No Image');
+    console.log(book.paragraphs.length);
+    let finalIndex = book.paragraphs.length;
+    let totalPages = book?.paragraphs?.length;  
+    let lastParagraph = book.paragraphs[finalIndex-1].paragraph.length;
 
-    return(
-        <div className="flex h-screen bg-gray-100 text-black">
-            <AsideComponent />
-            <main className="flex-1 overflow-y-auto">
+    if(lastParagraph == 0){
+        book.paragraphs.pop();
+        totalPages--;
+    }
+
+    console.log(book.paragraphs.length);
+
+
+    console.log("Current image URL:", book.paragraphs?.[currentParagraphIndex - 1]?.image || 'No Image');
+
+    //console.log(book.paragraphs[currentParagraphIndex - 1].paragraph.length)
+
+    return (
+        <div className="flex h-screen bg-base-200 text-base-content">
+            <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+
+            <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
+                isAsideOpen ? 'ml-64' : 'ml-0'}`}>
                 <div className="p-8 h-full flex flex-col">
                     <div className="flex justify-end mb-4">
-                        <button className="text-red-500 text-sm">Flag Story</button>
+                        <button
+                            className={`${styles.bookmarkButton} ${isBookmarked ? styles.bookmarkButtonActive : ''}`}
+                            onClick={handleBookmarkClick}
+                            >
+                            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                        </button>
+                                        
+                        <button className="text-error text-sm" onClick = {handleFlagClick}>
+                            Flag Story
+                        </button>
+                        {(session.user as { isAdmin?: boolean })?.isAdmin && (
+                            <button className="text-error text-sm ml-2" onClick={handleDeleteClick}>
+                                Delete Story
+                            </button>
+                        )}
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">
-                            <div className="text-gray-600 font-bold text-lg">{book.title}</div>
+                            <div className="text-base-content font-bold text-lg">{book.title}</div>
                         </div>
                         <div className="flex-1 w-full max-w-2xl overflow-y-auto">
-                            {book.paragraphs[currentParagraphIndex] && (
+                            {book.paragraphs?.[currentParagraphIndex - 1] && (
                                 <div className="flex justify-center items-center pt-12 mb-7">
                                     <img
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs[currentParagraphIndex].image?.toString()}
+                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString() || book.paragraphs?.[0].image?.toString()}
                                     />
                                 </div>
                             )}
-                            <p className="text-black text-sm border">
-                                {book.paragraphs[currentParagraphIndex].paragraph}
+                            <p className="text-base-content text-sm border border-base-300 p-4">
+                                {book.paragraphs?.[currentParagraphIndex - 1].paragraph}
                             </p>
                         </div>
                     </div>
                     <div className="flex justify-between items-center mt-4">
                         <button
                             onClick={() => setCurrentParagraphIndex(prev => Math.max(prev - 1, 0))}
-                            className="text-gray-600 text-sm"
+                            className="btn btn-sm btn-ghost"
                         >
                             Back
                         </button>
-                        <div className="text-gray-600 text-sm">{currentParagraphIndex}</div>
-                        <div className="text-gray-600 text-sm">{totalPages}</div>
+                        <div className="text-base-content text-sm">{currentParagraphIndex}</div>
+                        <div className="text-base-content text-sm">{totalPages}</div>
                         <button
-                            onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages - 1))}
-                            className="text-gray-600 text-sm"
+                            onClick={() => setCurrentParagraphIndex(prev => Math.min(prev + 1, totalPages))}
+                            className="btn btn-sm btn-ghost"
                         >
                             Next
                         </button>
                     </div>
+                    
                 </div>
             </main>
         </div>
-        
     );
 }
