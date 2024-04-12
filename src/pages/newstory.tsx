@@ -9,6 +9,7 @@ import AsideComponent from '../components/AsideComponent';
 import { getSession } from 'next-auth/react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import router from 'next/router';
+import Image from 'next/image';
 
 
 interface DashboardProps {
@@ -160,7 +161,12 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
                                     className={`${styles['genre-art-style']} border-2 border-black  p-4 text-center ${selectedGenre === genre ? styles.selected : ''}`}
                                     onClick={() => setSelectedGenre(genre)}
                                 >
-                                    <img src={genreImages[genre as keyof typeof genreImages]} alt={`Placeholder image for ${genre} genre`} />
+                                    <Image 
+                                        src={genreImages[genre as keyof typeof genreImages]} 
+                                        alt={`Placeholder image for ${genre} genre`} 
+                                        width={100}
+                                        height={100}
+                                    />
                                     {genre}
                                 </button>
                             ))}
@@ -175,7 +181,12 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedArtStyle === artStyle ? styles.selected : ''}`}
                                     onClick={() => setSelectedArtStyle(artStyle)}
                                 >
-                                    <img src={artStyleImages[artStyle as keyof typeof artStyleImages]} alt={`Placeholder image for ${artStyle} art style`} />
+                                    <Image
+                                        src={artStyleImages[artStyle as keyof typeof artStyleImages]} 
+                                        alt={`Placeholder image for ${artStyle} art style`} 
+                                        width={100}
+                                        height={100}
+                                     />
                                     {artStyle}
                                 </button>
                             ))}
