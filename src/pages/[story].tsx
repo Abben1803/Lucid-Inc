@@ -1,9 +1,9 @@
-import { useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
-import { Book, Paragraph, Image } from '../lib/interfaces';
+import { Book } from '../lib/interfaces';
 import styles from '../components/styleoption.module.css'
 
 
