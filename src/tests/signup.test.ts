@@ -1,7 +1,7 @@
 import { POST } from '../app/api/signup/route';
 import { expect } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 async function clearDatabase() {
   // Clear the database by deleting all users

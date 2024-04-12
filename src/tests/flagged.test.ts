@@ -1,10 +1,10 @@
 import { POST } from '../app/api/flagged/route';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '../lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 
 jest.mock('next-auth/next');
-jest.mock('../lib/prisma', () => ({
+jest.mock('@/lib/prisma', () => ({
     prisma: {
       flagged: {
         findFirst: jest.fn(),

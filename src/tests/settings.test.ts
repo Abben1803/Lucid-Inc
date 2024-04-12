@@ -1,9 +1,9 @@
 import settingsHandler from '../app/api/settings/settings';
-import { prisma } from '../lib/prisma';
+import { prisma } from '@/lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 
-jest.mock('../lib/prisma', () => ({
+jest.mock('@/lib/prisma', () => ({
   prisma: {
     user: {
       update: jest.fn(),
