@@ -2,7 +2,7 @@
 
 {
     "functions": {
-      "api/generatebook/route.ts": {
+      "api/generatebook/**.ts": {
         "maxDuration": 60
       }
     }
