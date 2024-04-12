@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../auth/[...nextauth]/route'; 
+import { authOptions } from '@/lib/auth'; 
 import { NextApiResponse } from 'next';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 const OpenAI = require('openai')
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
@@ -56,7 +56,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 }
 
 
-export async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
+async function getStory(story: string, age: string, language: string, genre: string, artstyle: string) {
 
 
     const systemPrompt = `Your role is to be a children's storybook writer for children of age ${age} in ${language}. The genre is ${genre} and the artstyle is ${artstyle}. You must not generate a title. Your job is to write a story based on the following prompt ${story}. You must generate at least 200 words per paragraph for the story. The story must consist of paragraphs separated by "|".`;
@@ -80,7 +80,7 @@ export async function getStory(story: string, age: string, language: string, gen
     return paragraphs;
 }
 
-export async function getPrompts(story: string, artstyle: string) {
+async function getPrompts(story: string, artstyle: string) {
 
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -102,7 +102,7 @@ export async function getPrompts(story: string, artstyle: string) {
 
 
 
-export async function generateAndSaveImagesDallE(prompts: string[]) {
+async function generateAndSaveImagesDallE(prompts: string[]) {
     const imagePaths = [];
 
 
@@ -133,14 +133,14 @@ export async function generateAndSaveImagesDallE(prompts: string[]) {
     return imagePaths;
 }
 
-export async function saveImage(base64Data: string, filename: string): Promise<string> {
+async function saveImage(base64Data: string, filename: string): Promise<string> {
     const buffer = Buffer.from(base64Data, 'base64');
     const imagePath = path.join(process.cwd(), 'public', 'images', filename);
     fs.writeFileSync(imagePath, buffer);
     return `/images/${filename}`;
 }
 
-export async function getTitle(story: string, language: string){
+async function getTitle(story: string, language: string){
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [
@@ -159,7 +159,7 @@ export async function getTitle(story: string, language: string){
     return title;
 }
 
-export async function generateAndSaveImagesStability(prompts: string[]) {
+async function generateAndSaveImagesStability(prompts: string[]) {
     const imagePaths = [];
 
     for (let i = 0; i < prompts.length; i++) {
