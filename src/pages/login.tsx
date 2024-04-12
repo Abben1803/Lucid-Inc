@@ -3,8 +3,7 @@ import "../app/globals.css";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
 import Router from "next/router";
-import { getServerSession } from "next-auth";
-import { authOptions } from '@/lib/auth';
+import { getSession } from "next-auth/react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
 
@@ -179,8 +178,9 @@ const RegisterComponent = (props: InferGetServerSidePropsType<typeof getServerSi
   );
 }
 
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+async function getServerSideProps(context: GetServerSidePropsContext) {
+  const session = await getSession(context);
+
   if (session) {
     return {
       redirect: {

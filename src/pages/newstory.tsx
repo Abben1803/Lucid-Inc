@@ -2,8 +2,6 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import styles from '../components/newstory.module.css'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { authOptions } from '@/lib/auth';
-import { getServerSession, Session } from 'next-auth';
 import { useState, useEffect } from 'react';
 import AsideComponent from '../components/AsideComponent';
 import { getSession } from 'next-auth/react';
@@ -12,9 +10,6 @@ import router from 'next/router';
 import Image from 'next/image';
 
 
-interface DashboardProps {
-    session: Session | null;
-}
 
 
 const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -211,7 +206,7 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-    const session = await getServerSession(context.req, context.res, authOptions);
+    const session = await getSession(context)
   
     if (!session) {
       return {

@@ -2,7 +2,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
-import { getServerSession, Session } from 'next-auth';
+import { getSession } from 'next-auth/react';
 import { authOptions } from '@/lib/auth';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
@@ -14,7 +14,7 @@ import Image from 'next/image';
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getSession(context);
 
   if (!session || !session.user?.email) {
     return {

@@ -2,17 +2,15 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../app/globals.css";
 import Link from "next/link";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getServerSession } from "next-auth";
-import { authOptions } from '@/lib/auth';
+import { getSession } from "next-auth/react";
 import { useState } from 'react';
-import { useRouter } from "next/router";
 import { prisma } from "../lib/prisma";
 import styles from "../components/newstory.module.css";
 import AsideComponent from "../components/AsideComponent";
 import Image from "next/image";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  const session = await getSession(context);
   console.log("Session in getServerSideProps:", session);
 
   if (!session) {
