@@ -10,7 +10,7 @@ import AWS from 'aws-sdk';
 const OpenAI = require('openai')
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
 
-export async function POST(req: Request, res: NextApiResponse) {
+export const POST = async(req: Request, res: NextApiResponse) => {
     const session = await getServerSession(authOptions); // Getting our server side session.
     const userEmail = session?.user?.email; // session
 
@@ -221,3 +221,6 @@ async function generateAndSaveImagesStability(prompts: string[]) {
 
     return imagePaths;
 }
+
+
+export default POST;

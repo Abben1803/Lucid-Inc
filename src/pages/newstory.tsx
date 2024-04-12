@@ -65,13 +65,14 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
             artstyle: selectedArtStyle
         };
     
-        const response = await fetch('pages/api/generatebook', {
+        const response = await fetch('/api/generatebook', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(storyData)
         });
         
         const data = await response.json();
+        console.log(data)
     
         if (data.bookId) {
             router.push(`/${data.bookId}`);

@@ -10,7 +10,7 @@ import { prisma } from '../lib/prisma';
 import styles from '../components/newstory.module.css'
 import AsideComponent from '../components/AsideComponent';
 import { BookmarkProps } from '../lib/interfaces';
-
+import Image from 'next/image';
 
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
