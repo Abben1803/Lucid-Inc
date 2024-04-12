@@ -1,7 +1,7 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBook, faCog } from "@fortawesome/free-solid-svg-icons";
+
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Link from "next/link";
+import Image from "next/image";
 
 
 const HomeComponent = () => {
@@ -47,9 +47,11 @@ const HomeComponent = () => {
         </div>
         <div className="pl-12" style={{ width: "50%" }}>
           <div>
-            <img
+            <Image
               src="/images/landing.png"
               alt="Placeholder image representing a book cover"
+              width={500}
+              height={500}
               className="w-full"
             />
           </div>
