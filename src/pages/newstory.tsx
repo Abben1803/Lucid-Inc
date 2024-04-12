@@ -159,7 +159,7 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
                                     className={`${styles['genre-art-style']} border-2 border-black  p-4 text-center ${selectedGenre === genre ? styles.selected : ''}`}
                                     onClick={() => setSelectedGenre(genre)}
                                 >
-                                    <img src={genreImages[genre]} alt={`Placeholder image for ${genre} genre`} />
+                                    <img src={genreImages[genre as keyof typeof genreImages]} alt={`Placeholder image for ${genre} genre`} />
                                     {genre}
                                 </button>
                             ))}
@@ -174,7 +174,7 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
                                     className={`${styles['genre-art-style']} border-2 border-black p-4 text-center ${selectedArtStyle === artStyle ? styles.selected : ''}`}
                                     onClick={() => setSelectedArtStyle(artStyle)}
                                 >
-                                    <img src={artStyleImages[artStyle]} alt={`Placeholder image for ${artStyle} art style`} />
+                                    <img src={artStyleImages[artStyle as keyof typeof artStyleImages]} alt={`Placeholder image for ${artStyle} art style`} />
                                     {artStyle}
                                 </button>
                             ))}
