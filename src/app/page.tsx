@@ -3,7 +3,8 @@ import { faBook, faCog } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import Link from "next/link";
 
-export default function Home() {
+
+const HomeComponent = () => {
   return (
     <div className="flex h-screen bg-gradient-to-r from-neutral to-base-100">
       <div
@@ -57,3 +58,6 @@ export default function Home() {
     </div>
   );
 }
+
+
+export default HomeComponent;

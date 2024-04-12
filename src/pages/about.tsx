@@ -5,7 +5,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import { useState } from 'react';
 
 
-export default function About() {
+const AboutComponent = () => {
     const [isAsideOpen, setIsAsideOpen] = useState(true);
     const toggleAside = () => {
       setIsAsideOpen(!isAsideOpen);
@@ -56,4 +56,8 @@ export default function About() {
           </main>
         </div>
     );
+}
+
+export default function AboutPage() {
+  return <AboutComponent />;
 }

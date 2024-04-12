@@ -16,7 +16,7 @@ interface DashboardProps {
 }
 
 
-export default function newstory({session}: InferGetServerSidePropsType<typeof getServerSideProps>){
+const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
     const [selectedAge, setSelectedAge] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -225,3 +225,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       },
     };
 };
+
+
+export default NewStoryComponent;

@@ -29,7 +29,7 @@ const settingsSchema = z.object({
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
 
-export default function Settings({ user }: SettingsProps) {
+const SettingsComponent = ({ user }: SettingsProps) => {
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -151,3 +151,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         notFound: true,
     };
 }
+
+export default SettingsComponent;

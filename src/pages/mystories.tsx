@@ -66,7 +66,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 };
 
-export default function dashboard({bookmarks}: BookmarkProps){
+const DashboardComponent = ({bookmarks}: BookmarkProps) => {
     const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -121,3 +121,5 @@ export default function dashboard({bookmarks}: BookmarkProps){
       </div>
     );
 }
+
+export default DashboardComponent;

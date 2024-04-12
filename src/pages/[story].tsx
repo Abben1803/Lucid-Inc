@@ -8,7 +8,7 @@ import styles from '../components/styleoption.module.css'
 
 
 
-export default function Story() { 
+const StoryComponent = () => { 
     const [book, setBook] = useState<Book | null>(null);
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
@@ -242,4 +242,8 @@ export default function Story() {
             </main>
         </div>
     );
+}
+
+export default function StoryPage() {
+    return <StoryComponent />;
 }

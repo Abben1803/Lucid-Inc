@@ -30,9 +30,7 @@ const signupSchema = z
     message: "Password do not match",
   });
 
-export default function RegisterPage(
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
-) {
+const RegisterComponent = (props: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [isLogin, setIsLogin] = useState(true);
 
   useEffect(() => {
@@ -195,3 +193,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {},
   };
 }
+
+export default function RegisterPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return <RegisterComponent {...props} />;
+}
+
+

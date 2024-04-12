@@ -11,7 +11,7 @@ interface AdminProps {
   newBooks: (Book & { flagged: boolean })[];
 }
 
-export default function AdminPage({ newBooks }: AdminProps) {
+const AdminComponent = ({ newBooks }: AdminProps) => {
   return (
     <div>
       <h1>Admin Page</h1>
@@ -73,4 +73,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       newBooks: serializedNewBooks,
     },
   };
+}
+
+export default function AdminPage({ newBooks }: AdminProps) {
+  return <AdminComponent newBooks={newBooks} />;
 }

@@ -57,10 +57,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export default function dashboard({
-              additionalBooks,
-            }: InferGetServerSidePropsType<typeof getServerSideProps>) 
-{
+const DashboardComponent = ({additionalBooks}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isAsideOpen, setIsAsideOpen] = useState(true);
@@ -132,4 +129,8 @@ export default function dashboard({
       </main>
     </div>
   );
+}
+
+export default function DashboardPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return <DashboardComponent {...props} />;
 }
