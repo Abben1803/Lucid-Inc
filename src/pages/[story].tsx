@@ -8,7 +8,7 @@ import styles from '../components/styleoption.module.css'
 
 
 
-export default function story() { 
+export default function Story() { 
     const [book, setBook] = useState<Book | null>(null);
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
