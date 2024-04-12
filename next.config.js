@@ -4,6 +4,8 @@ module.exports = {
         {
           protocol: 'https',
           hostname: 'myuniquestorybucket.s3.amazonaws.com',
+          port: '', 
+          pathname: '/*',
         },
       ],
     },

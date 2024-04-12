@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { prisma } from "../lib/prisma";
 import styles from "../components/newstory.module.css";
 import AsideComponent from "../components/AsideComponent";
+import Image from "next/image";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await getServerSession(context.req, context.res, authOptions);
@@ -96,11 +97,17 @@ const DashboardComponent = ({additionalBooks}: InferGetServerSidePropsType<typeo
                   {" "}
                   {/* Container with fixed height and hidden overflow */}
                   {book.paragraphs?.[0]?.image?.image ? (
-                    <img
+                    <Image
+                    
                       src={book.paragraphs[0].image.image}
                       alt={book.title}
+                      width = {500}
+                      height = {500}
+
                       className="object-cover w-full h-full transition-transform duration-300 ease-in-out hover:scale-110 rounded-t-lg" // Scale image on hover
                     />
+                    
+                    
                   ) : (
                     <div className="bg-base-300 w-full h-full rounded-t-lg"></div> // Placeholder if no image
                   )}

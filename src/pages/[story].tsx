@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import AsideComponent from '../components/AsideComponent';
 import { Book } from '../lib/interfaces';
 import styles from '../components/styleoption.module.css'
+import Image from 'next/image';
 
 
 
@@ -208,11 +209,11 @@ const StoryComponent = () => {
                         <div className="flex-1 w-full max-w-2xl overflow-y-auto">
                             {book.paragraphs?.[currentParagraphIndex - 1] && (
                                 <div className="flex justify-center items-center pt-12 mb-7">
-                                    <img
+                                    <Image
                                         alt=""
                                         width={512}
                                         height={512}
-                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString() || book.paragraphs?.[0].image?.toString()}
+                                        src={book.paragraphs?.[currentParagraphIndex - 1].image?.toString() ?? book.paragraphs?.[0].image?.toString() ?? ''}
                                     />
                                 </div>
                             )}

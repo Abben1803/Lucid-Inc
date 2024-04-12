@@ -93,9 +93,11 @@ const DashboardComponent = ({bookmarks}: BookmarkProps) => {
                 {currentBooks.map((book) => (
                   <Link key={book.id} href={`/${book.id}`} className={`${styles.bookCard} card`}>
                     {book.paragraphs?.[0]?.image?.image ? (
-                      <img
+                      <Image
                         src={book.paragraphs[0].image?.image}
                         alt={book.title}
+                        width={500}
+                        height={500}
                         className={`${styles.bookImage} card-img-top`}
                       />
                     ) : (
