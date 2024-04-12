@@ -31,28 +31,31 @@ export async function POST(req: Request, res: NextApiResponse) {
 
     // Generate title
     const title = await getTitle(storyParagraphs.join('|'), language);
-
-    const book = await prisma.book.create({
-        data: {
-            title: title, 
-            userEmail, 
-            inputParams: {
-                create: { age: parseInt(age), prompt, genre, artstyle, language },
+    try {
+        const book = await prisma.book.create({
+            data: {
+                title: title, 
+                userEmail, 
+                inputParams: {
+                    create: { age: parseInt(age), prompt, genre, artstyle, language },
+                },
+                paragraphs: {
+                    create: storyParagraphs.map((paragraph: string, index: number) => {
+                        const imageData = imagePaths[index] ? { create: { image: imagePaths[index] } } : undefined;
+                        return {
+                            paragraph,
+                            paragraphNumber: index + 1,
+                            image: imageData,
+                        };
+                    }),
+                },
             },
-            paragraphs: {
-                create: storyParagraphs.map((paragraph: string, index: number) => {
-                    const imageData = imagePaths[index] ? { create: { image: imagePaths[index] } } : undefined;
-                    return {
-                        paragraph,
-                        paragraphNumber: index + 1,
-                        image: imageData,
-                    };
-                }),
-            },
-        },
-    });
-
-    return NextResponse.json({ bookId: book.id }, { status: 200 });
+        });
+        return NextResponse.json({ bookId: book.id }, { status: 200 });
+    }catch (error) {
+        console.error('Error creating book:', error);
+        return NextResponse.json({ error: 'Failed to create book' }, { status: 500 });
+    }
 
 }
 
