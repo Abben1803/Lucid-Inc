@@ -67,7 +67,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 };
 
 export default function dashboard({bookmarks}: BookmarkProps){
-    const router = useRouter();
     const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
