@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 @import "daisyui/dist/full.css";
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -33,4 +35,16 @@ body {
   }
 }
 
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype');
+}
+
+.font-controls {
+  border: 1px solid #ddd; /* Light grey border */
+  padding: 8px; /* Padding around the controls */
+  border-radius: 8px; /* Rounded corners */
+  display: flex;
+  align-items: center;
+}
 

@@ -6,17 +6,37 @@ import AsideComponent from '../components/AsideComponent';
 import { Book } from '../lib/interfaces';
 import styles from '../components/styleoption.module.css'
 import Image from 'next/image';
+import Head from 'next/head';
 
 
 
 const StoryComponent = () => { 
     const [book, setBook] = useState<Book | null>(null);
+    const [fontStyle, setFontStyle] = useState('IndieFlower');
+    const [fontSize, setFontSize] = useState(20);
     const [currentParagraphIndex, setCurrentParagraphIndex] = useState(1);
     const router = useRouter();
     const { story: bookId } = router.query;
     const { data: session } = useSession();
     const [isBookmarked, setIsBookmarked] = useState(false);
     const [isAsideOpen, setIsAsideOpen] = useState(true);
+
+    const setToIndieFlower = () => setFontStyle("IndieFlower");
+    const setToOpenDyslexic = () => setFontStyle("OpenDyslexic");
+    const increaseFontSize = () => {
+        setFontSize((currentSize) => {
+          const maxSize = 25; // Set your maximum size here
+          if (currentSize < maxSize) {
+            return currentSize + 1;
+          } else {
+            return currentSize;
+          }
+        });
+      };
+
+    const decreaseFontSize = () =>
+    setFontSize((currentSize) => Math.max(currentSize - 1, 12)); 
+
     const toggleAside = () => {
       setIsAsideOpen(!isAsideOpen);
     };
@@ -179,28 +199,64 @@ const StoryComponent = () => {
     //console.log(book.paragraphs[currentParagraphIndex - 1].paragraph.length)
 
     return (
+        <>
+        <Head>
+            <link
+            href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap"
+            rel="stylesheet"
+            />
+        </Head>
         <div className="flex h-screen bg-base-200 text-base-content">
             <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
-
-            <main className={`flex-1 overflow-y-auto transition-all duration-300 ${
-                isAsideOpen ? 'ml-64' : 'ml-0'}`}>
+            <main className={`flex-1 overflow-y-auto transition-all duration-300 ${isAsideOpen ? 'ml-64' : 'ml-0'}`}>
                 <div className="p-8 h-full flex flex-col">
-                    <div className="flex justify-end mb-4">
-                        <button
-                            className={`${styles.bookmarkButton} ${isBookmarked ? styles.bookmarkButtonActive : ''}`}
-                            onClick={handleBookmarkClick}
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex items-center">
+                            <button
+                                onClick={setToIndieFlower}
+                                className="btn btn-outline btn-primary btn-sm mr-2"
                             >
-                            {isBookmarked ? 'Bookmarked' : 'Bookmark'}
-                        </button>
-                                        
-                        <button className="text-error text-sm" onClick = {handleFlagClick}>
-                            Flag Story
-                        </button>
-                        {(session.user as { isAdmin?: boolean })?.isAdmin && (
-                            <button className="text-error text-sm ml-2" onClick={handleDeleteClick}>
-                                Delete Story
+                                Cursive
                             </button>
-                        )}
+                            <button
+                                onClick={setToOpenDyslexic}
+                                className="btn btn-outline btn-primary btn-sm"
+                            >
+                                Simple
+                            </button>
+                            <div className="mx-4 px-2">
+                                <button
+                                    onClick={decreaseFontSize}
+                                    className="btn btn-primary btn-sm mr-2"
+                                >
+                                    -
+                                </button>
+                                <span className="mx-2">{fontSize}px</span>
+                                <button
+                                    onClick={increaseFontSize}
+                                    className="btn btn-primary btn-sm ml-2"
+                                >
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                        <div className="flex items-center">
+                            <button
+                                className={`${styles.bookmarkButton} ${isBookmarked ? styles.bookmarkButtonActive : ''}`}
+                                onClick={handleBookmarkClick}
+                            >
+                                {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                            </button>
+
+                            <button className="text-error text-sm ml-2" onClick={handleFlagClick}>
+                                Flag Story
+                            </button>
+                            {(session.user as { isAdmin?: boolean })?.isAdmin && (
+                                <button className="text-error text-sm ml-2" onClick={handleDeleteClick}>
+                                    Delete Story
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="flex-1 flex flex-col items-center justify-center">
                         <div className="text-center mb-4">
@@ -217,7 +273,11 @@ const StoryComponent = () => {
                                     />
                                 </div>
                             )}
-                            <p className="text-base-content text-sm border border-base-300 p-4">
+                            <p
+                                className={`text-base-content text-sm border border-base-300 p-4 font-${fontStyle}`}
+                                style={{ fontFamily: fontStyle === "IndieFlower" ? "Indie Flower" : "Open Dyslexic",
+                                    fontSize: `${fontSize}px` }}
+                            >
                                 {book.paragraphs?.[currentParagraphIndex - 1].paragraph}
                             </p>
                         </div>
@@ -238,10 +298,10 @@ const StoryComponent = () => {
                             Next
                         </button>
                     </div>
-                    
                 </div>
             </main>
         </div>
+        </>
     );
 }
 
