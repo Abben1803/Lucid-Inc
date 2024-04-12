@@ -4,7 +4,7 @@ import Link from "next/link";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../app/api/auth/[...nextauth]/route";
-import { useState } from "react";
+import { useState } from 'react';
 import { useRouter } from "next/router";
 import { prisma } from "../lib/prisma";
 import styles from "../components/newstory.module.css";
@@ -59,8 +59,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function dashboard({
               additionalBooks,
-            }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const router = useRouter();
+            }: InferGetServerSidePropsType<typeof getServerSideProps>) 
+{
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isAsideOpen, setIsAsideOpen] = useState(true);

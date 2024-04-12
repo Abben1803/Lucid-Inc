@@ -4,7 +4,7 @@ import styles from '../components/newstory.module.css'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { getServerSession, Session } from 'next-auth';
-import React from 'react';
+import { useState, useEffect } from 'react';
 import AsideComponent from '../components/AsideComponent';
 import { getSession } from 'next-auth/react';
 import LoadingOverlay from '../components/LoadingOverlay';
@@ -18,14 +18,14 @@ interface DashboardProps {
 
 export default function newstory({session}: InferGetServerSidePropsType<typeof getServerSideProps>){
 
-    const [selectedAge, setSelectedAge] = React.useState("");
-    const [selectedLanguage, setSelectedLanguage] = React.useState("");
-    const [selectedGenre, setSelectedGenre] = React.useState("");
-    const [selectedArtStyle, setSelectedArtStyle] = React.useState("");
-    const [storyPrompt, setStoryPrompt] = React.useState("")
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [isFormValid, setIsFormValid] = React.useState(false);
-    const [isAsideOpen, setIsAsideOpen] = React.useState(true);
+    const [selectedAge, setSelectedAge] = useState("");
+    const [selectedLanguage, setSelectedLanguage] = useState("");
+    const [selectedGenre, setSelectedGenre] = useState("");
+    const [selectedArtStyle, setSelectedArtStyle] = useState("");
+    const [storyPrompt, setStoryPrompt] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
+    const [isFormValid, setIsFormValid] = useState(false);
+    const [isAsideOpen, setIsAsideOpen] = useState(true);
 
     const validateForm = () => {
         return (
@@ -41,7 +41,7 @@ export default function newstory({session}: InferGetServerSidePropsType<typeof g
       setIsAsideOpen(!isAsideOpen);
     };
   
-    React.useEffect(() => {
+    useEffect(() => {
         setIsFormValid(validateForm());
     }, [selectedAge, selectedLanguage, selectedGenre, selectedArtStyle]);
 

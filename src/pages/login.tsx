@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from 'react';
 import "../app/globals.css";
 import { z } from "zod";
 import { signIn } from "next-auth/react";
@@ -33,9 +33,9 @@ const signupSchema = z
 export default function RegisterPage(
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  const [isLogin, setIsLogin] = React.useState(true);
+  const [isLogin, setIsLogin] = useState(true);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const formType = urlParams.get("form");
     if (formType === "signup") {
@@ -124,7 +124,7 @@ export default function RegisterPage(
               Login
             </button>
             <p className="text-center mt-4">
-              Don't have an account?{" "}
+              Don&apose;t have an account?{" "}
               <button
                 type="button"
                 className="text-blue-500 hover:underline"
