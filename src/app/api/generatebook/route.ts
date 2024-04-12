@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth'; 
 import { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import AWS from 'aws-sdk';
 
 const OpenAI = require('openai')
 const openai = new OpenAI(process.env.OPENAI_API_KEY);
@@ -133,11 +134,26 @@ async function generateAndSaveImagesDallE(prompts: string[]) {
     return imagePaths;
 }
 
+
+const s3 = new AWS.S3({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-east-1', 
+});
+
 async function saveImage(base64Data: string, filename: string): Promise<string> {
     const buffer = Buffer.from(base64Data, 'base64');
-    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
-    fs.writeFileSync(imagePath, buffer);
-    return `/images/${filename}`;
+
+    const params = {
+        Bucket: 'myuniquestorybucket', 
+        Key: filename, 
+        Body: buffer,
+        ContentType: 'image/png', 
+    };
+
+    const uploadResult = await s3.upload(params).promise();
+    console.log(uploadResult);
+    return uploadResult.Location; // returns the public URL of the uploaded image
 }
 
 async function getTitle(story: string, language: string){
