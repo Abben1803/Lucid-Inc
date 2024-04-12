@@ -140,25 +140,11 @@ async function generateAndSaveImagesDallE(prompts: string[]) {
 }
 
 
-const s3 = new AWS.S3({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: 'us-east-1', 
-});
-
 async function saveImage(base64Data: string, filename: string): Promise<string> {
     const buffer = Buffer.from(base64Data, 'base64');
-
-    const params = {
-        Bucket: 'myuniquestorybucket', 
-        Key: filename, 
-        Body: buffer,
-        ContentType: 'image/png', 
-    };
-
-    const uploadResult = await s3.upload(params).promise();
-    console.log(uploadResult);
-    return uploadResult.Location; // returns the public URL of the uploaded image
+    const imagePath = path.join(process.cwd(), 'public', 'images', filename);
+    fs.writeFileSync(imagePath, buffer);
+    return `/images/${filename}`;
 }
 
 async function getTitle(story: string, language: string){
