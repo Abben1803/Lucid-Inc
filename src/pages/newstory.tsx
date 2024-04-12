@@ -2,7 +2,7 @@ import '@fortawesome/fontawesome-svg-core/styles.css';
 import "../app/globals.css";
 import styles from '../components/newstory.module.css'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
-import { authOptions } from '../app/api/auth/[...nextauth]/next-auth.options';
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { getServerSession, Session } from 'next-auth';
 import { useState, useEffect } from 'react';
 import AsideComponent from '../components/AsideComponent';

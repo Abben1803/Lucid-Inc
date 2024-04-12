@@ -4,7 +4,7 @@ import { z } from "zod";
 import { signIn } from "next-auth/react";
 import Router from "next/router";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../app/api/auth/[...nextauth]/next-auth.options";
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Link from "next/link";
 

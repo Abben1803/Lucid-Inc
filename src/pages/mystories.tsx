@@ -3,7 +3,7 @@ import "../app/globals.css";
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import { getServerSession, Session } from 'next-auth';
-import { authOptions } from '../app/api/auth/[...nextauth]/next-auth.options';
+import { authOptions } from '../app/api/auth/[...nextauth]/route';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { prisma } from '../lib/prisma';
