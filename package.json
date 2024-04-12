@@ -17,6 +17,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^5.11.0",
+    "@prisma/engines": "^5.12.1",
     "@vercel/analytics": "^1.2.2",
     "aws-sdk": "^2.1598.0",
     "bcrypt": "^5.1.1",
