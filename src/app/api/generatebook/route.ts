@@ -6,9 +6,11 @@ import { authOptions } from '@/lib/auth';
 import { NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
 import AWS from 'aws-sdk';
+import OpenAI from 'openai';
 
-const OpenAI = require('openai')
-const openai = new OpenAI(process.env.OPENAI_API_KEY);
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY!,
+  });
 
 export async function POST(req: Request, res: NextApiResponse) {
     const session = await getServerSession(authOptions); // Getting our server side session.
@@ -122,7 +124,7 @@ async function generateAndSaveImagesDallE(prompts: string[]) {
             });
 
             if (response.data && response.data.length > 0) {
-                const base64Image = response.data[0].b64_json;
+                const base64Image = response.data[0].b64_json ?? '';
                 const filename = `image-${Date.now()}-${i}.png`;
                 const imagePath = await saveImage(base64Image, filename);
                 imagePaths.push(imagePath);
@@ -178,50 +180,52 @@ async function getTitle(story: string, language: string){
     return title;
 }
 
-async function generateAndSaveImagesStability(prompts: string[]) {
-    const imagePaths = [];
 
-    for (let i = 0; i < prompts.length; i++) {
-        const prompt = prompts[i];
-        const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Accept: 'application/json',
-                Authorization: `Bearer ${process.env.STABILITYAI_API_KEY}`,
-            },
-            body: JSON.stringify({
-                text_prompts: [
-                    {
-                        text: prompt,
-                    },
-                ],
-                cfg_scale: 7,
-                clip_guidance_preset: 'FAST_BLUE',
-                height: 512,
-                width: 512,
-                samples: 1,
-                steps: 30,
-            }),
-        });
+// we will leave this commented so we dont use stabilitiy anymore...
+// async function generateAndSaveImagesStability(prompts: string[]) {
+//     const imagePaths = [];
 
-        if (!response.ok) {
-            console.error(`Failed to generate image for prompt: ${prompt}`);
-            continue;
-        }
+//     for (let i = 0; i < prompts.length; i++) {
+//         const prompt = prompts[i];
+//         const response = await fetch('https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Accept: 'application/json',
+//                 Authorization: `Bearer ${process.env.STABILITYAI_API_KEY}`,
+//             },
+//             body: JSON.stringify({
+//                 text_prompts: [
+//                     {
+//                         text: prompt,
+//                     },
+//                 ],
+//                 cfg_scale: 7,
+//                 clip_guidance_preset: 'FAST_BLUE',
+//                 height: 512,
+//                 width: 512,
+//                 samples: 1,
+//                 steps: 30,
+//             }),
+//         });
 
-        const data = await response.json();
+//         if (!response.ok) {
+//             console.error(`Failed to generate image for prompt: ${prompt}`);
+//             continue;
+//         }
 
-        if (data.artifacts && data.artifacts.length > 0) {
-            const base64Image = data.artifacts[0].base64;
-            const filename = `image-${Date.now()}-${i}.png`;
-            const imagePath = await saveImage(base64Image, filename);
-            imagePaths.push(imagePath);
-        } else {
-            console.error(`No image data received for prompt: ${prompt}`);
-        }
-    }
+//         const data = await response.json();
 
-    return imagePaths;
-}
+//         if (data.artifacts && data.artifacts.length > 0) {
+//             const base64Image = data.artifacts[0].base64;
+//             const filename = `image-${Date.now()}-${i}.png`;
+//             const imagePath = await saveImage(base64Image, filename);
+//             imagePaths.push(imagePath);
+//         } else {
+//             console.error(`No image data received for prompt: ${prompt}`);
+//         }
+//     }
+
+//     return imagePaths;
+// }
 
