@@ -2,7 +2,7 @@
 
 {
     "functions": {
-      "api/generatebook/**.ts": {
+      "api/*/**.ts": {
         "maxDuration": 60
       }
     }
