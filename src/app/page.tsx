@@ -16,11 +16,10 @@ const HomeComponent = () => {
           style={{ width: "50%" }}
         >
           <div className="flex items-center mb-8">
-            <Image
+            <img
               src="/logo.png"
               alt="My Unique Story Logo"
-              width="64"npm
-              height="64"
+              style={{ width: "64px", height: "auto" }}
             />
             <span className="text-base-content font-semibold text-lg ml-3">
               My Unique Story
@@ -48,11 +47,9 @@ const HomeComponent = () => {
         </div>
         <div className="pl-12" style={{ width: "50%" }}>
           <div>
-            <Image
+            <img
               src="/images/landing.png"
               alt="Placeholder image representing a book cover"
-              width={500}
-              height={500}
               className="w-full"
             />
           </div>
