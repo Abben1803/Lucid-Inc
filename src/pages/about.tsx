@@ -3,6 +3,7 @@ import AsideComponent from '../components/AsideComponent';
 import "../app/globals.css";
 import '@fortawesome/fontawesome-svg-core/styles.css';
 import { useState } from 'react';
+import Image from 'next/image';
 
 
 const AboutComponent = () => {
@@ -31,7 +32,7 @@ const AboutComponent = () => {
                   <div className="flex items-center">
                     <div className="avatar">
                       <div className="w-16 rounded-full">
-                        <img src="/path/to/founder-avatar.jpg" alt="Founder" />
+                        <Image src="" alt="Founder" width={50} height ={50}/>
                       </div>
                     </div>
                     <div className="ml-4 flex-wrap">
@@ -49,7 +50,12 @@ const AboutComponent = () => {
                   </div>
                 </div>
                 <div>
-                  <img src="/images/3b6c168f-75f3-44f9-a4f5-b9cbb726c23f.png" alt="About M.U.S." className="w-full rounded-lg shadow-lg" />
+                  <Image 
+                    src="/images/3b6c168f-75f3-44f9-a4f5-b9cbb726c23f.png" 
+                    alt="About M.U.S." className="w-full rounded-lg shadow-lg" 
+                    width={500}
+                    height={500}
+                  />
                 </div>
               </div>
             </div>

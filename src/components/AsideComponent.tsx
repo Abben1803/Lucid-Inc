@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 interface AsideComponentProps {
   isOpen: boolean;
@@ -39,9 +40,11 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
       >
         <div className="w-full p-6 bg-base-100 border-t border-base-300">
           <div className="flex items-center">
-            <img
+            <Image
               src="/logo.png" 
               alt="My Unique Story Logo"
+              width={48}
+              height={48}
               className="h-12"
             />
             <span className="text-lg font-semibold ml-2">My Unique Story</span>
