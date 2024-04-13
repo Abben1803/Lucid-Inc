@@ -82,7 +82,7 @@ const DashboardComponent = ({additionalBooks}: InferGetServerSidePropsType<typeo
       >
         <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100">
           <h2 className="text-xl font-semibold mb-4">
-            Your Recently Created Books
+            Your Recently Crafted Story Books
           </h2>
           <div className={styles.gridContainer}>
             {currentBooks.map((book) => (
@@ -122,7 +122,7 @@ const DashboardComponent = ({additionalBooks}: InferGetServerSidePropsType<typeo
               <button
                 key={i + 1}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`btn btn-sm ${
+                className={`btn btn-sm mx-2 btn-secondary ${
                   currentPage === i + 1 ? "btn-accent" : ""
                 }`}
               >

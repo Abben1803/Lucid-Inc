@@ -20,6 +20,12 @@
     animation: spin 2s linear infinite;
 }
 
+.message {
+    color: white;
+    font-size: 24px;
+    margin-top: 24px; /* Space between loader and message */
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
