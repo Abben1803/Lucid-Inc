@@ -23,3 +23,10 @@
     background-color: #059669;
     border-color: #059669;
 }
+
+.storyContent {
+    font-family: 'Indie Flower', cursive; /* The second font is a fallback */
+    font-size: 20px; /* Adjust the font size as needed */
+    line-height: 1.6; /* This increases the space between lines */
+    letter-spacing: 0.5px; /* This increases the space between letters */
+  }
