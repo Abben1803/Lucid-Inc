@@ -27,25 +27,28 @@ const AboutComponent = () => {
                     M.U.S. (My Unique Stories) is a captivating platform that empowers young minds to unleash their creativity and embark on enchanting storytelling adventures. With M.U.S., children can easily craft their own stories, complete with vivid illustrations, and share them with a community of fellow young authors.
                   </p>
                   <p className="text-lg mb-6">
-                    My mission is to foster a love for storytelling, encourage imagination, and provide a safe and nurturing environment for children to express themselves through the power of words and visuals. We believe that every child has a unique voice and boundless potential waiting to be discovered.
+                    Our mission is to foster a love for storytelling, encourage imagination, and provide a safe and nurturing environment for children to express themselves through the power of words and visuals. We believe that every child has a unique voice and boundless potential waiting to be discovered.
                   </p>
+                  <p>Developed for - Mr. Lee Mallon</p>
+                  <p>Developed by - Team Lucid Inc.</p>
+                  <br />
                   <div className="flex items-center">
                     <div className="avatar">
                       <div className="w-16 rounded-full">
-                        <Image src="" alt="Founder" width={50} height ={50}/>
+                        <Image src="/lucid_logo.jpeg" alt="Founder" width={50} height ={50}/>
                       </div>
                     </div>
                     <div className="ml-4 flex-wrap">
-                      <p className="text-lg font-semibold">Ashraf Ben</p>
-                      <p className="text-base">Software Dev</p>
-                      <p className="text-lg font-semibold">Abdul Rahman</p>
-                      <p className="text-base">Place Holder</p>
+                      <p className="text-lg font-semibold">Ashraf Ben Al Haj</p>
+                      <p className="text-base">Software Co-ordinator</p>
+                      <p className="text-lg font-semibold">Abdul Rahman El Sayyed</p>
+                      <p className="text-base">Secretary</p>
                       <p className="text-lg font-semibold">Bhavin Desai</p>
-                      <p className="text-base">Place Holder</p>
-                      <p className="text-lg font-semibold">Samra</p>
-                      <p className="text-base">Place Holder</p>
-                      <p className="text-lg font-semibold">Kevin Richards</p>
-                      <p className="text-base">Place Holder</p>
+                      <p className="text-base">Team Leader</p>
+                      <p className="text-lg font-semibold">Samra Ahmed</p>
+                      <p className="text-base">Security Co-ordinator; Documenter</p>
+                      <p className="text-lg font-semibold">Kevin Richar Correya</p>
+                      <p className="text-base">Communications Officer</p>
                     </div>
                   </div>
                 </div>
@@ -64,6 +67,6 @@ const AboutComponent = () => {
     );
 }
 
-export default function AboutPage() {
+export default function AboutPage(props) {
   return <AboutComponent />;
 }
