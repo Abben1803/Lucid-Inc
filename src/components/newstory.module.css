@@ -17,6 +17,14 @@
   margin-bottom: 8px;
 }
 
+/* Apply transformations to img when hovering over .genre-art-style */
+.genre-art-style:hover img {
+  transform: scale(1.1); /* You can adjust the scale factor as desired */
+  border-radius: 10%;
+  width: max-content;
+  height: max-content;
+}
+
 .selected {
   background-color: #e5d8d0;
   color: #4c2a21;
@@ -34,6 +42,8 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
 }
+
+
 /* .bookCard { */
   /* border: 3px solid #956666; */
   /* padding: 16px; */

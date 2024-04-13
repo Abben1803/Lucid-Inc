@@ -41,7 +41,7 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
         <div className="w-full p-6 bg-base-100 border-t border-base-300">
           <div className="flex items-center">
             <Image
-              src="/logo.png" 
+              src="/logo.png"
               alt="My Unique Story Logo"
               width={48}
               height={48}
@@ -54,25 +54,25 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
           Hello {firstPart}
         </div>
         <div className="mb-8">
-          <div className="flex items-center mb-4 cursor-pointer hover:text-primary transition-colors duration-200">
+          <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faHome} className="text-base-content mr-2" />
             <span>
               <Link href="/dashboard">Home</Link>
             </span>
           </div>
-          <div className="flex items-center mb-4 cursor-pointer hover:text-primary transition-colors duration-200">
+          <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faPen} className="text-base-content mr-2" />
             <span>
               <Link href="/newstory">New Story</Link>
             </span>
           </div>
-          <div className="flex items-center mb-4 cursor-pointer hover:text-primary transition-colors duration-200">
+          <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faBook} className="text-base-content mr-2" />
             <span>
               <Link href="/mystories">My Stories</Link>
             </span>
           </div>
-          <div className="flex items-center mb-4 cursor-pointer hover:text-primary transition-colors duration-200">
+          <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon
               icon={faGlobe}
               className="text-base-content mr-2"
@@ -81,9 +81,19 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
               <Link href="/about">About Us</Link>
             </span>
           </div>
-        </div>
-        <div className="mb-8">
-          <div className="flex items-center mb-4 cursor-pointer hover:text-primary transition-colors duration-200">
+
+          {/* <div className="mb-6">
+          <label className="flex cursor-pointer gap-2">
+            <span className="label-text">Dark</span>
+            <input
+              type="checkbox"
+              value="cupcake"
+              className="toggle theme-controller"
+            />
+            <span className="label-text">Light</span>
+          </label>
+        </div> */}
+          <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faCog} className="text-base-content mr-2" />
             <span>
               <Link href="/settings">Settings</Link>

@@ -1,5 +1,6 @@
-import '@fortawesome/fontawesome-svg-core/styles.css';
+
 import "../app/globals.css";
+import '@fortawesome/fontawesome-svg-core/styles.css';
 import styles from '../components/newstory.module.css'
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { useState, useEffect } from 'react';
