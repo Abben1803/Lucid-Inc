@@ -76,30 +76,42 @@ const DashboardComponent = ({
   const endIndex = startIndex + itemsPerPage;
   const currentBooks = additionalBooks.slice(startIndex, endIndex);
 
-  // if (additionalBooks.length === 0) {
-  //   return (
-  //     <div className="flex h-screen bg-base-200 text-base-content">
-  //       <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
-  //       <main className={`flex-1 p-6 transition-all duration-300 ${isAsideOpen ? "ml-64" : "ml-0"}`}>
-  //         <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100 flex items-center justify-center">
-  //           <div className="text-center">
-  //             <p className="text-lg mb-4">
-  //               Hey young reader, you haven't created any stories yet.
-  //             </p>
-  //             <p className="mb-4">
-  //               Click on 'New Story' on the left side and bring your imagination to life right now!
-  //             </p>
-  //             <Link href="/new-story">
-  //               <a className="btn btn-primary btn-lg">
-  //                 Create a New Story
-  //               </a>
-  //             </Link>
-  //           </div>
-  //         </div>
-  //       </main>
-  //     </div>
-  //   );
-  // }
+  if (additionalBooks.length === 0) {
+    return (
+      <div className="flex h-screen bg-base-200 text-base-content">
+        <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
+        <main
+          className={`flex-1 p-6 transition-all duration-300 ${
+            isAsideOpen ? "ml-64" : "ml-0"
+          }`}
+        >
+          <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100 flex items-center justify-center">
+            <div className="flex-col items-center justify-center text-center">
+              <div className="mb-4 flex justify-center w-full">
+                <Image
+                  src="/images/no_stories.png" // The path to your image file
+                  alt="Encouragement for creating new stories"
+                  width={512} // The width you desire
+                  height={512} // The height you desire
+                  className="rounded-lg shadow-lg"
+                />
+              </div>
+              <p className="text-lg mb-4">
+                Hey young reader, you haven't created any stories yet.
+              </p>
+              <p className="mb-4">
+                Click on 'New Story' below (or on the left side) and bring your imagination
+                to life right now!
+              </p>
+              <Link href="/newstory" className="btn btn-accent btn-lg">
+                Create a New Story
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-base-200 text-base-content">
