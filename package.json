@@ -12,6 +12,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "bad-words": "^3.0.3",
     "@fortawesome/fontawesome-svg-core": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
@@ -34,6 +35,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bad-words": "^3.0.3",
     "@types/bcrypt": "^5.0.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^20",

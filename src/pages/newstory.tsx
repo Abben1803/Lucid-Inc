@@ -8,6 +8,7 @@ import { getSession } from 'next-auth/react';
 import LoadingOverlay from '../components/LoadingOverlay';
 import router from 'next/router';
 import Image from 'next/image';
+import Filter from 'bad-words';
 
 
 
@@ -22,6 +23,41 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
     const [isLoading, setIsLoading] = useState(false);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isAsideOpen, setIsAsideOpen] = useState(true);
+    const customBadWords = [
+        'pig', 'kill', 'hate', 'stupid', 'idiot', 'hell', 'alcohol', 'casino', 
+        'bet', 'pork', 'swine', 'sex', 'gay', 'dictatorship', 'naked', 'nude', 'beer', 
+        'wine', 'vodka', 'whiskey', 'drunk', 'gamble', 'lottery', 'terrorist', 
+        'bomb', 'gun', 'shoot', 'murder', 'assassinate', 'theft', 'steal', 'rob', 
+        'rape', 'porn', 'porno', 'prostitute', 'hooker', 'genocide', 'ethnic cleansing', 
+        'suicide', 'devil', 'satan', 'infidel', 'kafir', 'jihad', 'sharia', 
+        'talaq', 'fatwa', 'haram', 'halal', 'niqab', 'hijab', 'burqa', 
+        'jinn', 'magic', 'sorcery', 'witchcraft', 'curse', 'damn', 'sodomy', 
+        'lesbian', 'homosexuality', 'queer', 'LGBT', 'LGBTQ', 'transgender', 'bisexual', 
+        'fag', 'faggot', 'dyke', 'slut', 'whore', 'bitch', 'bastard', 
+        'ass', 'arse', 'scum', 'communism', 'fascism', 'nazi', 'hitler', 
+        'isis', 'taliban', 'al-Qaeda', 'syndicate', 'mafia', 'yakuza', 
+        'rebel', 'rebellion', 'anarchy', 'anarchist', 'riot', 'rioter', 
+        'looter', 'corruption', 'corrupt', 'bribe', 'kickback', 'embezzle', 
+        'embezzlement', 'fraud', 'scandal', 'conspiracy', 'plot', 'scheme', 
+        'drug', 'cocaine', 'heroin', 'marijuana', 'cannabis', 'weed', 'opium', 
+        'abuse', 'abuser', 'violence', 'violent', 'aggression', 'aggressive', 
+        'attack', 'assault', 'harm', 'hurt', 'damage', 'danger', 'threat', 
+        'menace', 'abortion', 'miscarriage', 'adultery', 'fornication', 'illegitimate',
+        'bastard', 'incest', 'sibling rivalry', 'envy', 'jealous', 'covet', 'greed', 
+        'lust', 'pride', 'sloth', 'wrath', 'gluttony', 'envy', 'vanity',
+        'deceit', 'lie', 'liar', 'deceive', 'cheat', 'fraudulent', 'dishonest'
+    ];
+    
+    const customFilter = new Filter({ list: customBadWords });
+
+    const handleChange = (e) => {
+        const newPrompt = e.target.value.slice(0, 200); // Ensures it's always within the limit
+        if (!customFilter.isProfane(newPrompt)) {
+            setStoryPrompt(newPrompt);
+        } else {
+            alert('Please avoid using inappropriate language.');
+        }
+    };
 
     const validateForm = () => {
         return (
@@ -43,6 +79,10 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
 
 
     const handleSubmit = async () => {
+        if (customFilter.isProfane(storyPrompt)) {
+            alert('Please remove any inappropriate language from your story prompt before submitting.');
+            return;
+        }
         setIsLoading(true);
         const session = await getSession(); // Get the client-side session
         const userId = session?.user?.email; // Extract the userId from the session
@@ -135,13 +175,14 @@ const NewStoryComponent = ({session}: InferGetServerSidePropsType<typeof getServ
                             <div>
                                 <label className="block mb-1">Give us a glimpse into your story</label>
                                 <textarea className="border-2 border-black w-full h-24 p-2" placeholder="For eg. This story is about a boy named Esh, he's a wizard and doesn't know" value = {storyPrompt} 
-                                    onChange={(e) => {
-                                        const newPrompt = e.target.value;
-                                        if (newPrompt.length <= 200) {
-                                            setStoryPrompt(newPrompt);
-                                        }
-                                        setStoryPrompt(newPrompt.slice(0, 200));
-                                    }}       
+                                    // onChange={(e) => {
+                                    //     const newPrompt = e.target.value;
+                                    //     if (newPrompt.length <= 200) {
+                                    //         setStoryPrompt(newPrompt);
+                                    //     }
+                                    //     setStoryPrompt(newPrompt.slice(0, 200));
+                                    // }}       
+                                    onChange={handleChange}
                                 ></textarea>
                                 <div className="text-right">{storyPrompt.length}/200</div>
                             </div>
