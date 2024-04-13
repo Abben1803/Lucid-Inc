@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext } from 'next';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { getSession } from 'next-auth/react';
 import { useState } from 'react';
 import { User } from '@prisma/client';
@@ -28,7 +28,7 @@ const settingsSchema = z.object({
 type SettingsFormData = z.infer<typeof settingsSchema>;
 
 
-const SettingsComponent = ({ user }: SettingsProps) => {
+const SettingsComponent = ({ user }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
     const [email, setEmail] = useState(user.email);
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -70,7 +70,7 @@ const SettingsComponent = ({ user }: SettingsProps) => {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100 text-black">
+        <div className="flex h-screen bg-base-200">
             <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
 
             <main className={`flex flex-1 items-center justify-center transition-all duration-300 ${

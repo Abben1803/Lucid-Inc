@@ -33,7 +33,7 @@ const StoryComponent = () => {
   };
 
   const decreaseFontSize = () =>
-    setFontSize((currentSize) => Math.max(currentSize - 1, 12));
+    setFontSize((currentSize) => Math.max(currentSize - 1, 15));
 
   const toggleAside = () => {
     setIsAsideOpen(!isAsideOpen);
@@ -343,6 +343,7 @@ const StoryComponent = () => {
                   )
                 }
                 className="btn btn-sm btn-outline btn-secondary"
+                disabled={currentParagraphIndex === totalPages}
               >
                 Next
               </button>
