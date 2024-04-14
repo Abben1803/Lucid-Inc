@@ -143,7 +143,7 @@ const StoryComponent = () => {
           method: "DELETE",
         });
         if (response.ok) {
-          router.push("/dashboard");
+          router.push("/admin");
         } else {
           throw new Error("Failed to delete book");
         }
