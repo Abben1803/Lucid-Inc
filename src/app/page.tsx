@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const HomeComponent = () => {
   return (
-    <div className="flex h-screen bg-gradient-to-r from-neutral to-base-100">
+    <div className="flex h-screen bg-base-100">
       <div
         className="m-auto bg-base-100 p-12 shadow-lg rounded-lg flex bg-gradient-to-r from-base-100 to-neutral"
         style={{ width: "90%" }}

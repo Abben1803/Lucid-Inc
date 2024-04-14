@@ -12,8 +12,8 @@ import Filter from "bad-words";
 import { ExamplesModal } from "../components/ExamplesModal.module";
 
 const NewStoryComponent = ({
-  session,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+          session,
+        }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [selectedAge, setSelectedAge] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
@@ -278,12 +278,12 @@ const NewStoryComponent = ({
 
   return (
     <>
-      <div className="flex h-screen bg-gray-100 ">
+      <div className="flex h-screen bg-base-200 text-base-content ">
         <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
 
-        <div className="flex-1 bg-gradient-to-r from-neutral to-base-100 p-8">
+        <div className="flex-1 bg-base-200 p-8">
           <main
-            className={`flex-1 bg-gradient-to-r from-neutral to-base-100 p-8 transition-all duration-300 ${
+            className={`flex-1 bg-base-100 p-8 transition-all duration-300 ${
               isAsideOpen ? "ml-64" : "ml-0"
             }`}
           >

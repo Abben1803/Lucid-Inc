@@ -86,7 +86,7 @@ const RegisterComponent = (props: InferGetServerSidePropsType<typeof getServerSi
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-neutral to-base-100">
+    <div className="min-h-screen flex items-center justify-center bg-base-100">
       <div className="absolute top-0 left-0 m-8">
         <Link href="/" className="flex items-center">
           <img
@@ -194,7 +194,7 @@ async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export default function RegisterPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function RegisterPage(props) {
   return <RegisterComponent {...props} />;
 }
 

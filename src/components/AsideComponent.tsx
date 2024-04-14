@@ -82,7 +82,7 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
             </span>
           </div>
 
-          {/* <div className="mb-6">
+          <div className="mb-6">
           <label className="flex cursor-pointer gap-2">
             <span className="label-text">Dark</span>
             <input
@@ -92,7 +92,7 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
             />
             <span className="label-text">Light</span>
           </label>
-        </div> */}
+        </div>
           <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faCog} className="text-base-content mr-2" />
             <span>

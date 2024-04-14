@@ -85,7 +85,7 @@ const DashboardComponent = ({
             isAsideOpen ? "ml-64" : "ml-0"
           }`}
         >
-          <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100 flex items-center justify-center">
+          <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-base-100 flex items-center justify-center">
             <div className="flex-col items-center justify-center text-center">
               <div className="mb-4 flex justify-center w-full">
                 <Image
@@ -121,7 +121,7 @@ const DashboardComponent = ({
           isAsideOpen ? "ml-64" : "ml-0"
         }`}
       >
-        <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-gradient-to-r from-neutral to-base-100">
+        <div className="mt-6 p-6 shadow-sm rounded-lg mb-8 bg-base-100">
           <h2 className="text-xl font-semibold mb-4">
             Your Recently Crafted Story Books
           </h2>

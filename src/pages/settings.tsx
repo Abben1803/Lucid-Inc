@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import "../app/globals.css";
-import AsideComponent from '@/components/AsideComponent';
+import AsideComponent from "../components/AsideComponent";
 
 
 
@@ -70,7 +70,7 @@ const SettingsComponent = ({ user }: InferGetServerSidePropsType<typeof getServe
     };
 
     return (
-        <div className="flex h-screen bg-base-200">
+        <div className="flex h-screen bg-base-200 text-base-content">
             <AsideComponent isOpen={isAsideOpen} toggleAside={toggleAside} />
 
             <main className={`flex flex-1 items-center justify-center transition-all duration-300 ${
