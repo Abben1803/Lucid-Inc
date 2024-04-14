@@ -67,6 +67,6 @@ const AboutComponent = () => {
     );
 }
 
-export default function AboutPage(props) {
+export default function AboutPage() {
   return <AboutComponent />;
 }

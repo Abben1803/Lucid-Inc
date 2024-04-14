@@ -355,6 +355,6 @@ const StoryComponent = () => {
   );
 };
 
-export default function StoryPage(props) {
+export default function StoryPage() {
   return <StoryComponent />;
 }

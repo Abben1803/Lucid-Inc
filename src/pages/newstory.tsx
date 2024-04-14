@@ -179,7 +179,7 @@ const NewStoryComponent = ({
 
   const customFilter = new Filter({ list: customBadWords });
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> ) => {
     const newPrompt = e.target.value.slice(0, 200); // Ensures it's always within the limit
     if (!customFilter.isProfane(newPrompt)) {
       setStoryPrompt(newPrompt);
@@ -271,7 +271,7 @@ const NewStoryComponent = ({
   ];
 
   // Function to handle example selection
-  const handleExampleSelect = (example) => {
+  const handleExampleSelect = (example: string) => {
     setStoryPrompt(example);
     setShowExamplesModal(false); // Close the modal
   };

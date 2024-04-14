@@ -3,9 +3,7 @@ import "../app/globals.css";
 import Link from 'next/link';
 import { GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
-import { authOptions } from '@/lib/auth';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import { prisma } from '../lib/prisma';
 import styles from '../components/newstory.module.css'
 import AsideComponent from '../components/AsideComponent';
