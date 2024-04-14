@@ -17,14 +17,14 @@ const AdminComponent = ({ newBooks }: AdminProps) => {
     <div>
       <h1>Admin Page</h1>
       <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>Created At</th>
-          </tr>
-        </thead>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Created At</th>
+            </tr> 
+          </thead>
         <tbody>
           {newBooks.map((book) => (
             <tr key={book.id} style={{ backgroundColor: book.flagged ? 'red' : 'transparent' }}>
