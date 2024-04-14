@@ -194,7 +194,7 @@ async function getServerSideProps(context: GetServerSidePropsContext) {
   };
 }
 
-export default function RegisterPage(props) {
+export default function RegisterPage(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return <RegisterComponent {...props} />;
 }
 
