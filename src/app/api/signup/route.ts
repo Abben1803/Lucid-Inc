@@ -20,13 +20,13 @@ export async function POST(req: NextRequest, res: NextResponse) {
     return NextResponse.json({ message: 'Email and password are required.' }, { status: 400 });
   }
 
-  if(!validateEmail(email)) {
-    return NextResponse.json({ message: 'Invalid email format.' }, { status: 400 });
-  }
+  // if(!validateEmail(email)) {
+  //   return NextResponse.json({ message: 'Invalid email format.' }, { status: 400 });
+  // }
 
-  if(!validatePassword(password)) {
-    return NextResponse.json({ message: 'Password is too weak.' }, { status: 400 });
-  }
+  // if(!validatePassword(password)) {
+  //   return NextResponse.json({ message: 'Password is too weak.' }, { status: 400 });
+  // }
 
   try {
       // Check if the user already exists

@@ -85,12 +85,12 @@ export const authOptions: NextAuthOptions = {
         jwt: ({ token, user }) => {
         //console.log('JWT Callback', { token, user })
         if (user) {
-            const u = user as unknown as JWTUser
-            return {
-            ...token,
-            id: u.id,
-            isAdmin: u.isAdmin, // checking whether the user is an admin for some administrator page shenanigans
-            randomKey: u.randomKey
+                const u = user as unknown as JWTUser
+                return {
+                ...token,
+                id: u.id,
+                isAdmin: u.isAdmin, // checking whether the user is an admin for some administrator page shenanigans
+                randomKey: u.randomKey
             } 
         }
         return token

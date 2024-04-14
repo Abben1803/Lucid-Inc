@@ -43,7 +43,7 @@ const AdminComponent = ({ newBooks }: AdminProps) => {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await getSession();
+  const session = await getSession(context);
 
   if (!session || !(session.user as { isAdmin?: boolean }).isAdmin) {
     return {

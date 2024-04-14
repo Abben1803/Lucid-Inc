@@ -33,7 +33,7 @@ export async function POST(req: Request, res: NextApiResponse) {
 
     // Generate title
     const title = await getTitle(storyParagraphs.join('|'), language);
-    try {
+    try { 
         const book = await prisma.book.create({
             data: {
                 title: title, 
