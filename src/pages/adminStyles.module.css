@@ -1,0 +1,26 @@
+/* adminStyles.module.css */
+
+.adminTable { /* Define a local class */
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+/* Style for table headers */
+.adminTable th {
+  background-color: gray;
+  font-weight: bold;
+  text-align: left;
+  padding: 8px;
+}
+
+/* Style for table cells */
+.adminTable td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Style for flagged rows */
+.flaggedRow {
+  background-color: #ffcccc;
+}
