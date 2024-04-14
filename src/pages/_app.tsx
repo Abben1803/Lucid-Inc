@@ -1,16 +1,17 @@
-// Courtesy of next auth for checking sessions server side.
-
+// pages/_app.tsx
+import React from "react";
 import "../app/globals.css";
 import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
+import { ThemeProvider } from '../components/themeContext'; // make sure the path is correct
 
-function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }) {
   return (
-    <>
-      <SessionProvider session={session}>
+    <SessionProvider session={session}>
+      <ThemeProvider> {/* Add ThemeProvider here */}
         <Component {...pageProps} />
-      </SessionProvider>
-    </>
+      </ThemeProvider>
+    </SessionProvider>
   );
 }
 

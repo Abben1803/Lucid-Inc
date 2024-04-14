@@ -18,7 +18,7 @@ const config: Config = {
   },
   plugins: [require('daisyui')],
   daisyui: {
-    themes: ["synthwave", "dracula"],
+    themes: ["synthwave", "cupcake"],
     // themes: ["cupcake"]
   },
 };
