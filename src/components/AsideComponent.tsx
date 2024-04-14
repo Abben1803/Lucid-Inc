@@ -13,7 +13,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { ThemeContext } from "./themeContext";
+import { ThemeContext } from "./ThemeContext";
 import { useContext } from "react";
 
 interface AsideComponentProps {
@@ -21,7 +21,13 @@ interface AsideComponentProps {
   toggleAside: () => void;
 }
 
+interface ThemeContextValue {
+  theme: string;
+  toggleTheme: () => void;
+}
+
 const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
+
   const { data: session } = useSession();
   const email = session?.user?.email;
   const firstPart = email?.match?.(/[^@]+/)?.[0];
@@ -30,14 +36,14 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
     await signOut({ callbackUrl: "/login" });
   };
 
-  const { theme, toggleTheme } = useContext(ThemeContext);
+
+  const { theme, toggleTheme } = useContext<ThemeContextValue | undefined>(ThemeContext) || {};
+
+
 
   const isDarkTheme = theme === "synthwave";
-
-  const handleThemeChange = (event) => {
-    toggleTheme();
-  };
-
+  const handleThemeChange = toggleTheme ? toggleTheme : () => {};
+  
   return (
     <>
       <button className="fixed top-4 left-4 z-10" onClick={toggleAside}>
@@ -92,22 +98,6 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
             </span>
           </div>
 
-          <div className="flex-col absolute bottom-0 w-full border-t border-base-300 p-6 items-center justify-center">
-            <div className="mb-4 text-center">Viewing Mode</div>
-            <div className="mb-4">
-              <label className="flex cursor-pointer gap-2 justify-center">
-                <span className="label-text">Light</span>
-                <input
-                  type="checkbox"
-                  checked={isDarkTheme}
-                  onChange={handleThemeChange}
-                  className="toggle toggle-accent theme-controller"
-                />
-                <span className="label-text">Dark</span>
-              </label>
-            </div>
-          </div>
-
           <div className="flex items-center mb-6 cursor-pointer hover:text-primary transition-colors duration-200">
             <FontAwesomeIcon icon={faCog} className="text-base-content mr-2" />
             <span>
@@ -123,6 +113,21 @@ const AsideComponent = ({ isOpen, toggleAside }: AsideComponentProps) => {
               className="text-base-content mr-2"
             />
             <span>Log out</span>
+          </div>
+          <div className="flex-col absolute bottom-0 w-full p-6 items-center px-50">
+            <div className="mb-4 px-3">Viewing Mode</div>
+            <div className="mb-4">
+              <label className="flex cursor-pointer gap-2">
+                <span className="label-text">Light</span>
+                <input
+                  type="checkbox"
+                  checked={isDarkTheme}
+                  onChange={handleThemeChange}
+                  className="toggle toggle-accent theme-controller"
+                />
+                <span className="label-text">Dark</span>
+              </label>
+            </div>
           </div>
         </div>
       </aside>
