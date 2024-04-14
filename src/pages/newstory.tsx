@@ -12,8 +12,8 @@ import Filter from "bad-words";
 import { ExamplesModal } from "../components/ExamplesModal.module";
 
 const NewStoryComponent = ({
-          session,
-        }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+      session,
+    }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [selectedAge, setSelectedAge] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("");
@@ -255,10 +255,10 @@ const NewStoryComponent = ({
   };
 
   const artStyleImages = {
-    "Water Color": "/images/watercolor.webp",
-    "Comic Book": "/images/comic.webp",
     "Pixel Art": "/images/pixel.webp",
+    "Water Color": "/images/watercolor.webp",
     Cartoon: "/images/cartoon.webp",
+    "Comic Book": "/images/comic.webp",
   };
 
   const [showExamplesModal, setShowExamplesModal] = useState(false);
@@ -340,7 +340,10 @@ const NewStoryComponent = ({
                     onChange={handleChange}
                   ></textarea>
                   <div className="flex justify-between">
-                    <button onClick={() => setShowExamplesModal(true)} className="btn btn-sm btn-accent btn-outline ">
+                    <button
+                      onClick={() => setShowExamplesModal(true)}
+                      className="btn btn-sm btn-accent btn-outline "
+                    >
                       Examples
                     </button>
                     {storyPrompt.length}/200
@@ -383,7 +386,7 @@ const NewStoryComponent = ({
             <section className="mb-4">
               <h2 className="font-semibold mb-2">Pick an art-style</h2>
               <div className="grid grid-cols-4 gap-4">
-                {["Water Color", "Comic Book", "Pixel Art", "Cartoon"].map(
+                {["Pixel Art", "Water Color", "Cartoon", "Comic Book"].map(
                   (artStyle) => (
                     <button
                       key={artStyle}
